@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.EventObject;
-import java.util.HashMap;
+import java.util.List;
 import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -16,6 +16,7 @@ import static java.lang.Integer.parseInt;
 
 public class HomeUI extends JFrame {
     private JButton Back;
+    private JList<String> jl,jlRoom;
     private JButton NextColumn;
     private JButton AddRoom;
     private JButton SelectFacultybtn;
@@ -26,9 +27,10 @@ public class HomeUI extends JFrame {
     private JPanel PlanSeatPanel;
     private JPanel ColumnPanel;
     private JPanel FileListPanel;
+    private JPanel addStudentPanel;
     private JTextField Name,LName,Room;
-    private JComboBox Faculty;
-    private JComboBox Semester;
+    private JComboBox<String> Faculty;
+    private JComboBox<String> Semester;
     private JLabel RoomSelect;
     private JLabel FacultySelect;
     private JTextField StudentId,ColumnNamejt,ColumnNamejt2,ColumnNamejt3;
@@ -37,7 +39,6 @@ public class HomeUI extends JFrame {
     private JLabel ColumnName3;
     private String storeFaculty,storeSemester,storeSeat,strRoom,sql;
     private DatabaseOperation db;
-    private Vector<JCheckBox> storeCheckbox;
     private JTable TableM;
     public HomeUI()
     {
@@ -60,13 +61,13 @@ public class HomeUI extends JFrame {
         Back = new JButton("Back");
         AddRoom = new JButton("Select");
         SelectFacultybtn = new JButton("Select");
-        JButton studentList = new JButton("Student List");
+        JButton studentList = new JButton("Manage Student");
         JButton manageRoom = new JButton("Add Room");
         JButton planSeat = new JButton("Plan Seat");
         ContentPanel = new JPanel(new CardLayout());
         StudentListPanel = new JPanel();
         JPanel manageRoomPanel = new JPanel();
-        JPanel addStudentPanel = new JPanel();
+        addStudentPanel = new JPanel();
         JPanel seatPlanPanel = new JPanel();
         PlanSeatPanel = new JPanel();
         ColumnPanel = new JPanel(null);
@@ -118,7 +119,7 @@ public class HomeUI extends JFrame {
                 try {
                     roomInfoCollect();
                 } catch (Exception ex) {
-                    Msg.showMessage("select at least one room");
+                    Msg.showMessage(ex.getMessage());
                 }
             }
         });
@@ -313,6 +314,7 @@ public class HomeUI extends JFrame {
         FileList fls = new FileList();
         name =fls.list();
         FileListPanel.setLayout(null);
+        FileListPanel.removeAll();
         FileListPanel.setBackground(Color.white);
         int xaxis=2;
         int yaxis=15;
@@ -359,23 +361,17 @@ public class HomeUI extends JFrame {
             CardLayout cd = (CardLayout) ContentPanel.getLayout();
             cd.show(ContentPanel,"PSP");
         } catch (Exception e) {
-           Msg.showMessage(e.toString());
-
+           Msg.showMessage(e.getMessage());
         }
     }
     private void tempTableDispose() {
         db.deleteTempTable();
     }
     private void roomInfoCollect() throws Exception {
-        Vector<String> RoomName=new Vector<>();
-        for(JCheckBox x:storeCheckbox){
-            if(x.isSelected())
-            {
-                RoomName.add(x.getText());
-            }
+        List<String> RoomName = jlRoom.getSelectedValuesList();
+        if(RoomName.isEmpty()){
+            throw new Exception("please select at least one room");
         }
-        if(RoomName.isEmpty())
-            throw new Exception();
         tempTableDispose();
         db.createTempTable(sql);
         try {
@@ -385,14 +381,18 @@ public class HomeUI extends JFrame {
             Msg.showMessage(e.getMessage());
         }
     }
-    private void checkError(Vector<String> RoomName) throws Exception {
+    private void checkError(List<String> RoomName) throws Exception {
         RoomData rd = new RoomData();
-        if(rd.totalSeat(RoomName)<db.getTotal())
+        int totalStudent=db.countStudent();
+        int totalRoom=rd.totalSeat(RoomName);
+        if(totalStudent==-1)
+            throw new Exception("error");
+        if(totalRoom<totalStudent)
         {
-            throw new Exception("seat is less than total student\ntotal Seat="+rd.totalSeat(RoomName)+"\ntotal student="+db.getTotal());
+            throw new Exception("seat is less than total student\ntotal Seat="+totalRoom+"\ntotal student="+totalStudent);
         }
     }
-    private void roomDataCollect(Vector<String> RoomName)
+    private void roomDataCollect(List<String> RoomName)
     {
         int column,row;
         RoomData rd = new RoomData();
@@ -409,46 +409,35 @@ public class HomeUI extends JFrame {
         ex.writeFile();
     }
     private void FacultyInfoCollect() throws Exception {
-        Vector<String> Faculty = new Vector<>();
-        for (JCheckBox x : storeCheckbox) {
-            if (x.isSelected()) {
-                Faculty.add(x.getText());
-            }
-        }
-        if(Faculty.isEmpty())
+        List<String> Faculty = jl.getSelectedValuesList();
+        if(Faculty.isEmpty()) {
             throw new Exception("please select at least one");
+        }
         sql=Faculty.get(0);
         Faculty.remove(sql);
         sql="("+"'"+sql+"'";
         for(String x:Faculty){
             sql=sql+","+"'"+x+"'";
         }
-        sql="Select * from studentlist where faculty in "+sql+")" ;
+        sql="insert into temp Select * from studentlist where faculty in "+sql+")" ;
     }
     private void addFacultyItem(){
         SelectFacultyPanel.removeAll();
         SelectFacultyPanel.repaint();
-        JPanel checkBoxItem = new JPanel();
-        storeCheckbox=new Vector<>();
         DatabaseOperation FacultyChoosen = new DatabaseOperation();
         Vector <String> Faculty=FacultyChoosen.distinctFaculty();
 
         FacultySelect.setFont(new Font("verdana",1,16));
         FacultySelect.setBounds(50, 10, 200, 30);
         SelectFacultyPanel.add(FacultySelect);
-        for (String x:Faculty) {
-            JCheckBox jc = new JCheckBox(x);
-            storeCheckbox.add(jc);
-            jc.setFont(new Font("verdana",1,14));
-            jc.setBackground(Color.white);
-            checkBoxItem.add(jc);
-        }
-        JComboBox <JCheckBox> Facultycheckbox= new JComboBox<>(storeCheckbox);
-        Facultycheckbox.setBounds(10,40,SelectFacultyPanel.getWidth()-12,SelectFacultyPanel.getHeight()-200);
-        Facultycheckbox.setBackground(Color.white);
-        SelectFacultyPanel.add(Facultycheckbox);
-
-        SelectFacultybtn.setBounds(SelectFacultyPanel.getWidth()/2-100,checkBoxItem.getHeight()+45,120,30);
+        jl= new JList(Faculty);
+        jl.setBackground(new Color(255,255,255));
+        jl.setFont(new Font("verdana",1,14));
+        JScrollPane jsp = new JScrollPane(jl);
+        jsp.setBackground(Color.white);
+        jsp.setBounds(10,40,SelectFacultyPanel.getWidth()-12,SelectFacultyPanel.getHeight()-200);
+        SelectFacultyPanel.add(jsp);
+        SelectFacultybtn.setBounds(SelectFacultyPanel.getWidth()/2-100,jsp.getHeight()+100,120,30);
         SelectFacultyPanel.add(SelectFacultybtn);
         SelectFacultybtn.setFont(new Font("verdana",1,14));
         PlanSeatPanel.add(AddRoom);
@@ -464,26 +453,19 @@ public class HomeUI extends JFrame {
         Vector <String> roomName;
         RoomData rd = new RoomData();
         roomName=rd.retrieveTableName();
-        storeCheckbox=new Vector<>();
         PlanSeatPanel.removeAll();
         PlanSeatPanel.repaint();
         RoomSelect.setFont(new Font("verdana",1,16));
         RoomSelect.setBounds(10, 10, 200, 30);
         PlanSeatPanel.add(RoomSelect);
-        int xAxis=40;
-        int yAxis =35;
-        int height=40;
-        int width =100;
-        for (String x:roomName) {
-            JCheckBox jc = new JCheckBox(x);
-            storeCheckbox.add(jc);
-            jc.setFont(new Font("verdana",1,14));
-            jc.setBounds(xAxis,yAxis,width,height);
-            yAxis+=30;
-            PlanSeatPanel.add(jc);
-        }
+        jlRoom=new JList<>(roomName);
+        jlRoom.setFont(new Font("verdana",1,14));
+        jlRoom.setBackground(Color.white);
+        JScrollPane jsp = new JScrollPane(jlRoom);
+        jsp.setBounds(10,40,PlanSeatPanel.getWidth()-12,PlanSeatPanel.getHeight()-200);
         AddRoom.setFont(new Font("verdana",1,14));
-        AddRoom.setBounds(45,yAxis+30,100, 30);
+        AddRoom.setBounds(PlanSeatPanel.getWidth()/2-100,jsp.getHeight()+100,120,30);
+        PlanSeatPanel.add(jsp);
         PlanSeatPanel.add(AddRoom);
     }
     private void backAction() {
@@ -497,6 +479,7 @@ public class HomeUI extends JFrame {
             s1[0] = parseInt(ColumnNamejt.getText().trim());
             ColumnNamejt.setText("");
             s1[1] = parseInt(ColumnNamejt2.getText().trim());
+            ColumnNamejt2.setText("");
             ColumnNamejt2.setText("");
             if (storeSeat.equals("3")) {
                 s1[2] = parseInt(ColumnNamejt3.getText().trim());
@@ -565,21 +548,56 @@ public class HomeUI extends JFrame {
             }
         };
         TableM.setFont(new Font("verdana",1,12));
-        JButton delete = new JButton("Delete");
-        delete.setFont(new Font("verdana",1,16));
-        delete.setSelected(false);
-        delete.addActionListener(new ActionListener() {
+        JButton Delete = new JButton("Delete");
+        JButton Update = new JButton("Update");
+        Delete.setFont(new Font("verdana",1,16));
+        Update.setFont(Delete.getFont());
+        Update.setBounds(ContentPanel.getWidth()-160, 3, 150,30);
+        Delete.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 deleteActionPerformed();
             }
         });
+        Update.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                updateActionPerformed();
+            }
+        });
         JScrollPane SP=new JScrollPane(TableM);
         SP.setBounds(2, 40,ContentPanel.getWidth()-3,ContentPanel.getHeight()-45);
-        delete.setBounds(2,3,150,30);
-        StudentListPanel.add(delete);
+        Delete.setBounds(2,3,150,30);
+        StudentListPanel.add(Delete);
+        StudentListPanel.add(Update);
         StudentListPanel.add(SP);
     }
+
+    private void updateActionPerformed() {
+        Update UpdatePanel = new Update();
+        ContentPanel.add(UpdatePanel,"UPD");
+        int row = TableM.getSelectedRow();
+        if(row==-1){
+            Msg.showMessage("please Select row in table");
+            return;
+        }
+        String sid = TableM.getModel().getValueAt(row,0).toString().trim();
+        String [] Name=TableM.getModel().getValueAt(row,1).toString().trim().split(" ");
+        String firstnamev=Name[0];
+        String lastnamev=Name[1];
+        String [] Facultyv=TableM.getModel().getValueAt(row,2).toString().trim().split(" ");
+        String coursev = Facultyv[0];
+        String semesterv = Facultyv[1];
+        System.out.println(coursev+" "+semesterv);
+        UpdatePanel.setFirstName(firstnamev);
+        UpdatePanel.setLastName(lastnamev);
+        UpdatePanel.setFacultyCb(coursev);
+        UpdatePanel.setSemesterCb(semesterv);
+        UpdatePanel.setStudentId(sid);
+        CardLayout cardLayout = (CardLayout) ContentPanel.getLayout();
+        cardLayout.show(ContentPanel, "UPD");
+    }
+
     private void deleteActionPerformed(){
         int row =TableM.getSelectedRow();
         if(row==-1){
@@ -590,7 +608,7 @@ public class HomeUI extends JFrame {
         int x=JOptionPane.showConfirmDialog(this,"do you want to delete Student with id "+value);
         if(x == JOptionPane.YES_OPTION)
         {
-            db.DeleteData(Integer.parseInt(value));
+            db.deleteData(Integer.parseInt(value));
             showData();
             Msg.showMessage("sucessfully deleted");
         }
@@ -634,7 +652,7 @@ public class HomeUI extends JFrame {
                 Semester.setSelectedIndex(0);
             }
         } catch (Exception ex) {
-            Msg.showError(ex.toString());
+            Msg.showError(ex.getMessage());
             Name.setText("");
             LName.setText("");
         }

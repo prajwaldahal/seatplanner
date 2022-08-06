@@ -3,7 +3,6 @@ import java.util.Vector;
 public class DatabaseOperation {
     private Connection c;
     private String facultyStore = "";
-    private int total;
 
     public DatabaseOperation() {
         try {
@@ -31,21 +30,11 @@ public class DatabaseOperation {
     }
 
     public void createTempTable(String sqlQuery) {
-        total = 0;
         try {
             Statement s = c.createStatement();
             s.executeUpdate("drop table if exists temp");
             s.executeUpdate("Create table temp(id int primary key AUTO_INCREMENT,name varchar(50),faculty varchar(30))");
-            ResultSet r = s.executeQuery(sqlQuery);
-            if (!r.next())
-                Msg.showError("no student found");
-            while (r.next()) {
-                PreparedStatement pst = c.prepareStatement("insert into temp(name,faculty) values(?,?)");
-                pst.setString(1, r.getString("name"));
-                pst.setString(2, r.getString("Faculty"));
-                pst.executeUpdate();
-                total++;
-            }
+            s.executeUpdate(sqlQuery);
         } catch (SQLException se) {
             Msg.showError("error");
         }
@@ -62,7 +51,7 @@ public class DatabaseOperation {
                 facultyStore = StudentName.getString("faculty");
                 String deleteStmt = "delete from temp where  id=" + StudentName.getInt("id");
                 s.executeUpdate(deleteStmt);
-                return facultyStore;
+                return name;
             }
         } catch (SQLException e) {
             Msg.showError("unable to retirive data");
@@ -78,9 +67,10 @@ public class DatabaseOperation {
             s = c.createStatement();
             String s1 = "Select count(*) as totalStudent from temp";
             total = s.executeQuery(s1);
-            value = total.getInt(0);
+            if(total.next())
+                value = total.getInt("totalStudent");
         } catch (Exception e) {
-
+                return value;
         }
         return value;
     }
@@ -106,11 +96,6 @@ public class DatabaseOperation {
         }
         return null;
     }
-
-    public int getTotal() {
-        return total;
-    }
-
     public Vector<String> distinctFaculty() {
         Vector<String> FacultyList = new Vector<>();
         try {
@@ -126,13 +111,24 @@ public class DatabaseOperation {
         return FacultyList;
     }
 
-    public void DeleteData(int sid) {
+    public void deleteData(int sid) {
         try {
             Statement deleteSt = c.createStatement();
             deleteSt.executeUpdate("delete from studentlist where studentid=" + sid);
         } catch (Exception e) {
             Msg.showError("operation error");
             System.exit(1);
+        }
+    }
+    public void Update(Student s){
+        try {
+            PreparedStatement pst = c.prepareStatement("update studentlist set name=?,faculty=? where studentid=?");
+            pst.setString(1,s.getName());
+            pst.setString(2,s.getFaculty());
+            pst.setInt(3,s.getStudentid());
+            pst.executeUpdate();
+        } catch (SQLException e) {
+            Msg .showError("cant update");
         }
     }
 }

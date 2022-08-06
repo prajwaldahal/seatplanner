@@ -1,4 +1,5 @@
 import java.sql.*;
+import java.util.List;
 import java.util.Vector;
 public class RoomData {
     Connection c;
@@ -17,7 +18,7 @@ public class RoomData {
             if(r.next())
                 k=true;
         } catch (SQLException e) {
-            Msg.showError(e.toString());
+            Msg.showError("error");
         }
         return k;
     }
@@ -41,7 +42,6 @@ public class RoomData {
             }
         } catch (SQLException e) {
             Msg.showError("error");
-            e.printStackTrace();
         }
         return k;
     }
@@ -71,6 +71,7 @@ public class RoomData {
             pst.executeUpdate();
         } catch (SQLException e) {
             Msg.showError("insertion error");
+            e.printStackTrace();
         }
     }
     public Vector<String> retrieveTableName() {
@@ -95,10 +96,11 @@ public class RoomData {
             }
         } catch (SQLException e) {
             Msg.showError("operation error");
+            e.printStackTrace();
         }
         return roomName;
     }
-    public int totalSeat(Vector<String> roomName)
+    public int totalSeat(List<String> roomName)
     {
         int totalSeatv=0;
         for (String name :roomName) {

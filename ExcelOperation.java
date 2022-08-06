@@ -105,7 +105,7 @@ public class ExcelOperation {
         File f2;
         Date date = new Date();
         SimpleDateFormat Sdp= new SimpleDateFormat("dd-MMMM-yyyy hh:mm:ss");
-        String dateName="SP"+Sdp.format(date).replace(" ","t-");
+        String dateName="SP"+Sdp.format(date).replace(" ","-");
         dateName=dateName.replace(":","-");
         try {
             String pathPart="d://Seatplanner//";
@@ -117,7 +117,6 @@ public class ExcelOperation {
                     pathPart.replace("d://Seatplanner//","");
                 }
             }
-            System.out.println(pathPart+dateName+".xlsx");
             f2 = new File(pathPart+dateName+".xlsx");
             fpb = new FileOutputStream(f2);
             Workbook1.write(fpb);
