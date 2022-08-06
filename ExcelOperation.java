@@ -67,24 +67,20 @@ public class ExcelOperation {
             rowIndex += 3;
         }
     }
-    public void createRows(int row)
-    {
+    public void writeRows( int row) {
+        String stdName ;
+        String faculty;
+        int index;
         for (int i = 6; i < row+6; i++) {
+            faculty=" ";
             student=Sheet1.getRow(i);
             if(student==null)
                 student = Sheet1.createRow(i);
-        }
-        writeRows(row);
-    }
-    public void writeRows( int row) {
-        String stdName ;
-        int index;
-        for (int i = 6; i < row+6; i++) {
-            student = Sheet1.getRow(i);
             index= storeIndex.firstElement();
             for (int k = index; k <= index + 1; k++) {
                 XSSFCell name = student.createCell(k);
-                stdName = DBEX.SelectName();
+                stdName = DBEX.SelectName(faculty);
+                faculty=DBEX.getFacultyStore();
                 name.setCellValue(stdName);
                 Sheet1.autoSizeColumn(k,true);
                 name.setCellStyle(setCellStyle(14, true));

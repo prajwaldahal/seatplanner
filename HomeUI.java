@@ -1,3 +1,5 @@
+import org.apache.commons.math3.analysis.function.Add;
+
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
@@ -17,8 +19,8 @@ import static java.lang.Integer.parseInt;
 public class HomeUI extends JFrame {
     private JButton Back;
     private JList<String> jl,jlRoom;
-    private JButton NextColumn;
-    private JButton AddRoom;
+    private JButton AddRoomBtn;
+    private JButton SelectRoom;
     private JButton SelectFacultybtn;
     private JPanel ContentPanel;
     private JPanel StudentListPanel;
@@ -28,6 +30,7 @@ public class HomeUI extends JFrame {
     private JPanel ColumnPanel;
     private JPanel FileListPanel;
     private JPanel addStudentPanel;
+    private JButton ManageRoom;
     private JTextField Name,LName,Room;
     private JComboBox<String> Faculty;
     private JComboBox<String> Semester;
@@ -37,7 +40,8 @@ public class HomeUI extends JFrame {
     private JLabel ColumnName;
     private JLabel ColumnName2;
     private JLabel ColumnName3;
-    private String storeFaculty,storeSemester,storeSeat,strRoom,sql;
+    JComboBox ColumnNo;
+    private String strRoom,sql;
     private DatabaseOperation db;
     private JTable TableM;
     public HomeUI()
@@ -52,21 +56,21 @@ public class HomeUI extends JFrame {
         db = new DatabaseOperation();
         JPanel buttonPanel = new JPanel();
         SelectFacultyPanel = new JPanel();
-        JButton addStudent = new JButton("Add Student");
         JButton fileList = new JButton("Files");
         FileListPanel = new JPanel();
-        NextColumn = new JButton("Add");
-        JButton add = new JButton("Add");
+        AddRoomBtn = new JButton("Add");
+        JButton AddStudentBtn = new JButton("Add");
         JButton next = new JButton("Continue");
         Back = new JButton("Back");
-        AddRoom = new JButton("Select");
+        SelectRoom = new JButton("Select");
         SelectFacultybtn = new JButton("Select");
         JButton studentList = new JButton("Manage Student");
-        JButton manageRoom = new JButton("Add Room");
+        JButton AddRoom = new JButton("Add Room");
+        ManageRoom = new JButton("Manage Room");
         JButton planSeat = new JButton("Plan Seat");
         ContentPanel = new JPanel(new CardLayout());
         StudentListPanel = new JPanel();
-        JPanel manageRoomPanel = new JPanel();
+        JPanel AddRoomPanel = new JPanel();
         addStudentPanel = new JPanel();
         JPanel seatPlanPanel = new JPanel();
         PlanSeatPanel = new JPanel();
@@ -87,10 +91,10 @@ public class HomeUI extends JFrame {
         JLabel LNameL = new JLabel("LastName:");
         Room = new JTextField(30);
         JLabel roomL = new JLabel("RoomName");
-        JLabel numberDesk = new JLabel("Number of Column:");
+        JLabel NoColumnL = new JLabel("Number of Column:");
         JLabel numberPerSeat = new JLabel("Student Per Desk");
         Faculty = new JComboBox(faculty);
-        JComboBox seatcb = new JComboBox(seat);
+        ColumnNo = new JComboBox(seat);
         JLabel facultyL = new JLabel("Faculty:");
         StudentId = new JTextField(30);
         Semester = new JComboBox(sem);
@@ -114,7 +118,7 @@ public class HomeUI extends JFrame {
                 fileListAction();
             }
         });
-        AddRoom.addActionListener(new ActionListener() {
+        SelectRoom.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 try {
                     roomInfoCollect();
@@ -123,22 +127,10 @@ public class HomeUI extends JFrame {
                 }
             }
         });
-        Faculty.addItemListener(new ItemListener(){
-            public void itemStateChanged(ItemEvent e)
-            {
-                storeFaculty(e);
-            }
-        });
-        Semester.addItemListener(new ItemListener(){
-            public void itemStateChanged(ItemEvent e)
-            {
-                storeSemester(e);
-            }
-        });
-        seatcb.addItemListener(new ItemListener(){
-            public void itemStateChanged(ItemEvent e)
-            {
-                storeSeat(e);
+        ManageRoom.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                manageRoomActionPerformed();
             }
         });
         studentList.addActionListener(new ActionListener() {
@@ -147,16 +139,10 @@ public class HomeUI extends JFrame {
                 studentListActionPerformed();
             }
         });
-        manageRoom.addActionListener(new ActionListener() {
+        AddRoom.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt)
             {
-                manageRoomActionPerformed();
-            }
-        });
-        addStudent.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt)
-            {
-                addStudentActionPerformed();
+                AddRoomActionPerformed();
             }
         });
         next.addActionListener(new ActionListener() {
@@ -165,13 +151,13 @@ public class HomeUI extends JFrame {
                 nextActionPerformed();
             }
         });
-        add.addActionListener(new ActionListener() {
+        AddStudentBtn.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt)
             {
                 formValidate();
             }
         });
-        NextColumn.addActionListener(new ActionListener() {
+        AddRoomBtn.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                nextColumnAction();
             }
@@ -181,26 +167,28 @@ public class HomeUI extends JFrame {
                backAction();
             }
         });
-        buttonPanel.add(addStudent);
-        buttonPanel.add(manageRoom);
+        buttonPanel.add(AddRoom);
         buttonPanel.add(studentList);
         buttonPanel.add(fileList);
+        buttonPanel.add(ManageRoom);
         buttonPanel.setLayout(null);
         add(buttonPanel);
         buttonPanel.setBounds(0, 0, 160, 360);
         buttonPanel.setBackground(new Color(204, 255, 255));
 
-        addStudent.setFont(new Font("Verdana", 1, 12));
-        addStudent.setBounds(20, 100, 130, 30);
 
-        manageRoom.setFont(new Font("Verdana", 1, 12));
-        manageRoom.setBounds(20, 140, 130, 30);
+        AddRoom.setFont(new Font("Verdana", 1, 14));
+        AddRoom.setBounds(2, 180, 155, 30);
 
-        studentList.setFont(new Font("Verdana", 1, 12));
-        studentList.setBounds(20, 180, 130, 30);
+        ManageRoom.setFont(AddRoom.getFont());
+        ManageRoom.setBounds(2, 260, 155, 30);
 
-        fileList.setFont(new Font("Verdana", 1, 12));
-        fileList.setBounds(20, 220, 130, 30);
+        studentList.setFont(AddRoom.getFont());
+        studentList.setBounds(2, 140, 155, 30);
+
+        fileList.setFont(AddRoom.getFont());
+        fileList.setBounds(2, 220, 155, 30);
+
         StudentListPanel.setBackground(Color.white);
         StudentListPanel.setLayout(null);
 
@@ -213,16 +201,16 @@ public class HomeUI extends JFrame {
         roomL.setFont(new Font("Verdana", 1, 14));
         roomInnerPanel.add(roomL);
 
+
         Room.setBounds(30, 85, 200, 30);
         roomInnerPanel.add(Room);
 
-        numberDesk.setBounds(10, 93, 200, 80);
-        numberDesk.setFont(new Font("Verdana", 1, 14));
-        roomInnerPanel.add(numberDesk);
+        NoColumnL.setBounds(10, 93, 200, 80);
+        NoColumnL.setFont(new Font("Verdana", 1, 14));
+        roomInnerPanel.add(NoColumnL);
 
-        seatcb.setBounds(30, 145, 200, 30);
-        roomInnerPanel.add(seatcb);
-        storeSeat= (String) seatcb.getSelectedItem();
+        ColumnNo.setBounds(30, 145, 200, 30);
+        roomInnerPanel.add(ColumnNo);
 
         next.setBounds(350, 300, 95, 30);
         roomInnerPanel.add(next);
@@ -230,10 +218,10 @@ public class HomeUI extends JFrame {
         numberPerSeat.setBounds(100,230,150,80);
         numberPerSeat.setFont(new Font("Verdana", 1, 12));
         roomInnerPanel.setBackground(Color.white);
-        manageRoomPanel.add(RoomPanel);
+        AddRoomPanel.add(RoomPanel);
 
-        manageRoomPanel.setBackground(Color.white);
-        manageRoomPanel.setLayout(null);
+        AddRoomPanel.setBackground(Color.white);
+        AddRoomPanel.setLayout(null);
 
         nameL.setBounds(100, 3, 200, 80);
         nameL.setFont(new Font("Verdana", 1, 12));
@@ -256,12 +244,10 @@ public class HomeUI extends JFrame {
         Faculty.setBounds(150, 183, 200, 30);
         addStudentPanel.add(Faculty);
         Faculty.setSelectedIndex(0);
-        storeFaculty= (String) Faculty.getSelectedItem();
 
         Semester.setBounds(355, 183, 200, 30);
         addStudentPanel.add(Semester);
         Semester.setSelectedIndex(0);
-        storeSemester= (String) Semester.getSelectedItem();
 
         studentIdL.setBounds(100, 188, 200, 80);
         studentIdL.setFont(new Font("Verdana", 1, 12));
@@ -270,8 +256,8 @@ public class HomeUI extends JFrame {
         StudentId.setBounds(150, 243, 200, 30);
         addStudentPanel.add(StudentId);
 
-        add.setBounds(180, 290, 100, 30);
-        addStudentPanel.add(add);
+        AddStudentBtn.setBounds(180, 290, 100, 30);
+        addStudentPanel.add(AddStudentBtn);
 
         addStudentPanel.setBackground(Color.white);
         addStudentPanel.setLayout(null);
@@ -279,13 +265,13 @@ public class HomeUI extends JFrame {
         SelectFacultyPanel.setLayout(null);
         SelectFacultyPanel.setBackground(Color.white);
         ContentPanel.add(addStudentPanel, "ASP");
+        ContentPanel.add(FileListPanel,"FLP");
         ContentPanel.add(StudentListPanel, "SLP");
-        ContentPanel.add(manageRoomPanel, "MRP");
+        ContentPanel.add(AddRoomPanel, "ARP");
         ContentPanel.add(PlanSeatPanel,"PSP");
         ContentPanel.add(SelectFacultyPanel,"SFP");
-        ContentPanel.add(FileListPanel,"FLP");
         add(ContentPanel);
-        ContentPanel.setBounds(161, 0, 610, 360);
+        ContentPanel.setBounds(161, 0, 610, 359);
         seatPlanPanel.add(planSeat);
         seatPlanPanel.setLayout(null);
         add(seatPlanPanel);
@@ -309,6 +295,14 @@ public class HomeUI extends JFrame {
             }
         });
     }
+
+    private void manageRoomActionPerformed() {
+        ManageRoomPanel manageRoomPanel= new ManageRoomPanel();
+        ContentPanel.add(manageRoomPanel,"MRP");
+        CardLayout cardLayout= (CardLayout) ContentPanel.getLayout();
+        cardLayout.show(ContentPanel,"MRP");
+    }
+
     private void fileListAction() {
         Vector<String> name;
         FileList fls = new FileList();
@@ -403,7 +397,7 @@ public class HomeUI extends JFrame {
             ex.writeHeading(x);
             for (int i = 1; i<=column; i++) {
                 row=rd.getRow(i,x);
-                ex.createRows(row);
+                ex.writeRows(row);
             }
         }
         ex.writeFile();
@@ -440,7 +434,7 @@ public class HomeUI extends JFrame {
         SelectFacultybtn.setBounds(SelectFacultyPanel.getWidth()/2-100,jsp.getHeight()+100,120,30);
         SelectFacultyPanel.add(SelectFacultybtn);
         SelectFacultybtn.setFont(new Font("verdana",1,14));
-        PlanSeatPanel.add(AddRoom);
+        PlanSeatPanel.add(SelectRoom);
     }
     private void planSeatActionPerformed()
     {
@@ -463,10 +457,10 @@ public class HomeUI extends JFrame {
         jlRoom.setBackground(Color.white);
         JScrollPane jsp = new JScrollPane(jlRoom);
         jsp.setBounds(10,40,PlanSeatPanel.getWidth()-12,PlanSeatPanel.getHeight()-200);
-        AddRoom.setFont(new Font("verdana",1,14));
-        AddRoom.setBounds(PlanSeatPanel.getWidth()/2-100,jsp.getHeight()+100,120,30);
+        SelectRoom.setFont(new Font("verdana",1,14));
+        SelectRoom.setBounds(PlanSeatPanel.getWidth()/2-100,jsp.getHeight()+100,120,30);
         PlanSeatPanel.add(jsp);
-        PlanSeatPanel.add(AddRoom);
+        PlanSeatPanel.add(SelectRoom);
     }
     private void backAction() {
         CardLayout cardLayout = (CardLayout) RoomPanel.getLayout();
@@ -481,7 +475,7 @@ public class HomeUI extends JFrame {
             s1[1] = parseInt(ColumnNamejt2.getText().trim());
             ColumnNamejt2.setText("");
             ColumnNamejt2.setText("");
-            if (storeSeat.equals("3")) {
+            if (ColumnNo.getSelectedItem().equals("3")) {
                 s1[2] = parseInt(ColumnNamejt3.getText().trim());
                 ColumnNamejt3.setText("");
             }
@@ -502,10 +496,10 @@ public class HomeUI extends JFrame {
         CardLayout cardLayout = (CardLayout) ContentPanel.getLayout();
         cardLayout.show(ContentPanel, "ASP");
     }
-    private void manageRoomActionPerformed()
+    private void AddRoomActionPerformed()
     {
         CardLayout cardLayout = (CardLayout) ContentPanel.getLayout();
-        cardLayout.show(ContentPanel, "MRP");
+        cardLayout.show(ContentPanel, "ARP");
     }
 
     private void studentListActionPerformed()
@@ -548,11 +542,21 @@ public class HomeUI extends JFrame {
             }
         };
         TableM.setFont(new Font("verdana",1,12));
+        JButton Add = new JButton("Add Student");
         JButton Delete = new JButton("Delete");
         JButton Update = new JButton("Update");
+        Delete.setBounds(5,3,150,30);
         Delete.setFont(new Font("verdana",1,16));
+        Add.setBounds(Delete.getWidth()+75,3,150,30);
+        Add.setFont(Delete.getFont());
         Update.setFont(Delete.getFont());
         Update.setBounds(ContentPanel.getWidth()-160, 3, 150,30);
+        Add.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                addStudentActionPerformed();
+            }
+        });
         Delete.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -567,9 +571,9 @@ public class HomeUI extends JFrame {
         });
         JScrollPane SP=new JScrollPane(TableM);
         SP.setBounds(2, 40,ContentPanel.getWidth()-3,ContentPanel.getHeight()-45);
-        Delete.setBounds(2,3,150,30);
         StudentListPanel.add(Delete);
         StudentListPanel.add(Update);
+        StudentListPanel.add(Add);
         StudentListPanel.add(SP);
     }
 
@@ -613,18 +617,6 @@ public class HomeUI extends JFrame {
             Msg.showMessage("sucessfully deleted");
         }
     }
-    private void storeFaculty(ItemEvent e)
-    {
-        storeFaculty=(String) e.getItem();
-    }
-    private void storeSemester(ItemEvent e)
-    {
-        storeSemester=(String) e.getItem();
-    }
-    private void storeSeat(ItemEvent e)
-    {
-        storeSeat=(String) e.getItem();
-    }
     private void formValidate()
     {
         int storeStudentId=0;
@@ -644,7 +636,7 @@ public class HomeUI extends JFrame {
               flag=false;
             }
             if(flag){
-                db.insertData(storeStudentId,strName+" "+strLName,storeFaculty,storeSemester);
+                db.insertData(storeStudentId,strName+" "+strLName, (String) Faculty.getSelectedItem(), (String) Semester.getSelectedItem());
                 Name.setText("");
                 LName.setText("");
                 StudentId.setText("");
@@ -678,64 +670,59 @@ public class HomeUI extends JFrame {
             }
     }
     private void nextActionPerformed() {
+        boolean flag=false;
         try {
             strRoom = Room.getText().trim();
-            if (strRoom.isEmpty())
-            {
+            int str = parseInt(strRoom);
+            if(Integer.)
+            if (strRoom.isEmpty()) {
                 throw new RoomNameValidateException();
             }
-            int strColumn = Integer.parseInt(storeSeat);
-            try {
-                RoomdataEntry();
-                ColumnPanel.setBackground(Color.white);
-                if (strColumn == 2) {
-                    ColumnPanel.removeAll();
-                    ColumnPanel.repaint();
-                    ColumnPanel.add(ColumnName);
-                    ColumnName.setBounds(10, 3, 200, 80);
-                    ColumnName.setFont(new Font("Verdana", 1, 14));
-                    ColumnPanel.add(ColumnNamejt);
-                    ColumnNamejt.setBounds(50, 54, 200, 30);
-                    ColumnPanel.add(ColumnName2);
-                    ColumnName2.setBounds(10, 60, 200, 80);
-                    ColumnName2.setFont(new Font("Verdana", 1, 14));
-                    ColumnPanel.add(ColumnNamejt2);
-                    ColumnNamejt2.setBounds(50, 111, 200, 30);
-                } else {
-                    ColumnPanel.add(ColumnName);
-                    ColumnName.setBounds(10, 3, 200, 80);
-                    ColumnName.setFont(new Font("Verdana", 1, 14));
-                    ColumnPanel.add(ColumnNamejt);
-                    ColumnNamejt.setBounds(50, 54, 200, 30);
-                    ColumnPanel.add(ColumnName2);
-                    ColumnName2.setBounds(10, 60, 200, 80);
-                    ColumnName2.setFont(new Font("Verdana", 1, 14));
-                    ColumnPanel.add(ColumnNamejt2);
-                    ColumnNamejt2.setBounds(50, 111, 200, 30);
-                    ColumnPanel.add(ColumnName3);
-                    ColumnName3.setBounds(10, 117, 200, 80);
-                    ColumnName3.setFont(new Font("Verdana", 1, 14));
-                    ColumnPanel.add(ColumnNamejt3);
-                    ColumnNamejt3.setBounds(50, 168, 200, 30);
-                }
-                ColumnPanel.add(NextColumn);
-                NextColumn.setBounds(350, 300, 95, 30);
-                ColumnPanel.add(Back);
-                Back.setBounds(2, 300, 95, 30);
-                CardLayout cd = (CardLayout) RoomPanel.getLayout();
-                cd.show(RoomPanel,"CP");
-            }catch (RoomAlreadyExistException | SQLException e){
-                Msg.showMessage("room Already Exist or room name should not only be number");
-                Room.setText("");
+            String strColumn = (String) ColumnNo.getSelectedItem();
+            ColumnPanel.setBackground(Color.white);
+            if (strColumn.equals("2")) {
+                ColumnPanel.removeAll();
+                ColumnPanel.repaint();
+                ColumnPanel.add(ColumnName);
+                ColumnName.setBounds(10, 3, 200, 80);
+                ColumnName.setFont(new Font("Verdana", 1, 14));
+                ColumnPanel.add(ColumnNamejt);
+                ColumnNamejt.setBounds(50, 54, 200, 30);
+                ColumnPanel.add(ColumnName2);
+                ColumnName2.setBounds(10, 60, 200, 80);
+                ColumnName2.setFont(new Font("Verdana", 1, 14));
+                ColumnPanel.add(ColumnNamejt2);
+                ColumnNamejt2.setBounds(50, 111, 200, 30);
+            } else {
+                ColumnPanel.removeAll();
+                ColumnPanel.revalidate();
+                ColumnPanel.repaint();
+                ColumnPanel.add(ColumnName);
+                ColumnName.setBounds(10, 3, 200, 80);
+                ColumnName.setFont(new Font("Verdana", 1, 14));
+                ColumnPanel.add(ColumnNamejt);
+                ColumnNamejt.setBounds(50, 54, 200, 30);
+                ColumnPanel.add(ColumnName2);
+                ColumnName2.setBounds(10, 60, 200, 80);
+                ColumnName2.setFont(new Font("Verdana", 1, 14));
+                ColumnPanel.add(ColumnNamejt2);
+                ColumnNamejt2.setBounds(50, 111, 200, 30);
+                ColumnPanel.add(ColumnName3);
+                ColumnName3.setBounds(10, 117, 200, 80);
+                ColumnName3.setFont(new Font("Verdana", 1, 14));
+                ColumnPanel.add(ColumnNamejt3);
+                ColumnNamejt3.setBounds(50, 168, 200, 30);
             }
-        } catch (RoomNameValidateException ex) {
-            Room.setText("");
-            Msg.showMessage("submit valid information");
-        }
-    }
-    private void RoomdataEntry() throws RoomAlreadyExistException, SQLException {
-        RoomData rd = new RoomData();
-        rd.addRoom(strRoom);
+            ColumnPanel.add(AddRoomBtn);
+            AddRoomBtn.setBounds(350, 300, 95, 30);
+            ColumnPanel.add(Back);
+            Back.setBounds(2, 300, 95, 30);
+            CardLayout cd = (CardLayout) RoomPanel.getLayout();
+            cd.show(RoomPanel, "CP");
+            } catch(RoomNameValidateException  ex){
+                Room.setText("");
+                Msg.showMessage("field is empty");
+            }
     }
     public static void main(String[] args) {
             new HomeUI();

@@ -2,6 +2,8 @@ import java.sql.*;
 import java.util.Vector;
 public class DatabaseOperation {
     private Connection c;
+
+
     private String facultyStore = "";
 
     public DatabaseOperation() {
@@ -40,11 +42,11 @@ public class DatabaseOperation {
         }
     }
 
-    public String SelectName() {
+    public String SelectName(String faculty) {
         ResultSet StudentName;
         try {
             Statement s = c.createStatement();
-            String s1 = "Select * from temp where not faculty=" + "'" + facultyStore + "'" + " order by rand() limit 1";
+            String s1 = "Select * from temp where not faculty=" + "'" +faculty+ "'" + " order by rand() limit 1";
             StudentName = s.executeQuery(s1);
             if (StudentName.next()) {
                 String name = StudentName.getString("name");
@@ -130,5 +132,8 @@ public class DatabaseOperation {
         } catch (SQLException e) {
             Msg .showError("cant update");
         }
+    }
+    public String getFacultyStore() {
+        return facultyStore;
     }
 }

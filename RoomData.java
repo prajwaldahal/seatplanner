@@ -10,6 +10,15 @@ public class RoomData {
             Msg.showError("connection error");
         }
     }
+    public void deleteRoom(String roomName)
+    {
+        try {
+            Statement st = c.createStatement();
+            st.executeUpdate("Drop table "+roomName);
+        } catch (SQLException e) {
+            Msg.showError("error");
+        }
+    }
     public boolean checkTable(String roomName){
         boolean k=false;
         try {
@@ -21,14 +30,6 @@ public class RoomData {
             Msg.showError("error");
         }
         return k;
-    }
-    public void addRoom(String roomName) throws RoomAlreadyExistException,SQLException {
-        Statement stmt = c.createStatement();
-        if (!checkTable(roomName))
-            stmt.execute("create table " + roomName + "(column_name int , row_no int)");
-        else {
-            throw new RoomAlreadyExistException();
-        }
     }
     public int getColumn(String roomname)
     {
@@ -61,36 +62,38 @@ public class RoomData {
         }
         return k;
     }
-    public void addData(String roomName,int row,int col) {
-        PreparedStatement pst;
+    public void addData(String roomName,int row,int col)  {
         try {
+
+            Statement stmt = c.createStatement();
+            if (!checkTable(roomName))
+                stmt.execute("create table if not exist" + roomName + "(column_name int , row_no int)");
+            else {
+                throw new RoomAlreadyExistException("Room Already Exist");
+            }
+
             String s ="insert into " + roomName + " values (?,?)";
-            pst = c.prepareStatement(s);
+            PreparedStatement pst = c.prepareStatement(s);
             pst.setInt(1,  col);
             pst.setInt(2,row);
             pst.executeUpdate();
         } catch (SQLException e) {
             Msg.showError("insertion error");
-            e.printStackTrace();
+        } catch (RoomAlreadyExistException e) {
+            Msg.showError(e.getMessage());
         }
     }
     public Vector<String> retrieveTableName() {
         Vector<String> roomName=new Vector<>();
-        int count=0;
         try {
             Statement stmt = c.createStatement();
             ResultSet r = stmt.executeQuery("SELECT Table_name as TablesName from information_schema.tables where table_schema = 'roomdata'");
             while(true)
             {
                 if(r.next()){
-                    count++;
                     roomName.add(r.getString("TablesName"));
                 }
                 else{
-                    if(count==0)
-                    {
-                        Msg.showMessage("seat is less than number of student");
-                    }
                     break;
                 }
             }
