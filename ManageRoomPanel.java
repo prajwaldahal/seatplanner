@@ -9,6 +9,7 @@ import java.util.Vector;
 public class ManageRoomPanel extends JPanel {
     private final RoomData rd=new RoomData();
     private JTable TableM;
+    private JButton Add;
     private DefaultTableModel RoomTable;
     public ManageRoomPanel() {
         initComponent();
@@ -40,7 +41,7 @@ public class ManageRoomPanel extends JPanel {
         };
         TableM.setFont(new Font("verdana",1,12));
         TableM.setBackground(Color.white);
-        JButton Add = new JButton("Add Room");
+        Add = new JButton("Add Room");
         JButton Delete = new JButton("Delete");
         JButton Update = new JButton("Update");
         Delete.setBounds(5,3,150,30);
@@ -49,12 +50,6 @@ public class ManageRoomPanel extends JPanel {
         Add.setFont(Delete.getFont());
         Update.setFont(Delete.getFont());
         Update.setBounds(Add.getWidth()+300, 3, 150,30);
-        Add.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                addStudentActionPerformed();
-            }
-        });
         Delete.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -111,7 +106,7 @@ public class ManageRoomPanel extends JPanel {
         rd.deleteRoom(Name);
         initComponent();
     }
-
-    private void addStudentActionPerformed() {
+    public JButton getAdd() {
+        return Add;
     }
 }

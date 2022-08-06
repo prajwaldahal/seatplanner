@@ -66,21 +66,14 @@ public class RoomData {
         try {
 
             Statement stmt = c.createStatement();
-            if (!checkTable(roomName))
-                stmt.execute("create table if not exist" + roomName + "(column_name int , row_no int)");
-            else {
-                throw new RoomAlreadyExistException("Room Already Exist");
-            }
-
+            stmt.execute("create table if not exists " + roomName + "(column_name int , row_no int)");
             String s ="insert into " + roomName + " values (?,?)";
             PreparedStatement pst = c.prepareStatement(s);
             pst.setInt(1,  col);
             pst.setInt(2,row);
             pst.executeUpdate();
         } catch (SQLException e) {
-            Msg.showError("insertion error");
-        } catch (RoomAlreadyExistException e) {
-            Msg.showError(e.getMessage());
+            Msg.showError("insertion error \n"+e.getMessage());
         }
     }
     public Vector<String> retrieveTableName() {
