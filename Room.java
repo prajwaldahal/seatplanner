@@ -1,8 +1,12 @@
 public class Room {
     private String roomName;
+
     private int column;
+
     private int row;
+
     private int row2;
+
     private int row3;
 
     public Room(String roomName, int column, int row, int row2, int row3) {
@@ -12,23 +16,24 @@ public class Room {
         this.row2 = row2;
         this.row3 = row3;
     }
+
     public String getRoomName() {
-        return roomName;
+        return this.roomName;
     }
 
     public int getColumn() {
-        return column;
+        return this.column;
     }
 
     public int getRow() {
-        return row;
+        return this.row;
     }
 
     public int getRow2() {
-        return row2;
+        return this.row2;
     }
 
     public int getRow3() {
-        return row3;
+        return this.row3;
     }
 }

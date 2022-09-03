@@ -1,6 +1,9 @@
 public class Student {
     private int studentId;
-    private String faculty,name;
+
+    private String faculty;
+
+    private String name;
 
     public Student(int studentId, String name, String faculty) {
         this.studentId = studentId;
@@ -9,12 +12,14 @@ public class Student {
     }
 
     public int getStudentid() {
-        return studentId;
+        return this.studentId;
     }
+
     public String getFaculty() {
-        return faculty;
+        return this.faculty;
     }
+
     public String getName() {
-        return name;
+        return this.name;
     }
 }

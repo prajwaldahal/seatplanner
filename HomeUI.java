@@ -1,7 +1,10 @@
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
 import java.sql.ResultSet;
@@ -12,327 +15,402 @@ import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static java.lang.Integer.parseInt;
-
 public class HomeUI extends JFrame {
     private JButton Back;
-    private JList<String> jl,jlRoom;
+
+    private JList<String> jl;
+
+    private JList<String> jlRoom;
+
     private JButton AddRoomBtn;
+
     private JButton SelectRoom;
+
     private JButton SelectFacultybtn;
+
     private JPanel ContentPanel;
+
     private JPanel StudentListPanel;
+
     private JPanel RoomPanel;
+
     private JPanel SelectFacultyPanel;
+
     private JPanel PlanSeatPanel;
+
     private JPanel ColumnPanel;
+
     private JPanel FileListPanel;
-    private JTextField Name,LName,Room;
+
+    private JTextField Name;
+
+    private JTextField LName;
+
+    private JTextField Room;
+
     private JComboBox<String> Faculty;
+
     private JComboBox<String> Semester;
+
     private JLabel RoomSelect;
+
     private JLabel FacultySelect;
-    private JTextField StudentId,ColumnNamejt,ColumnNamejt2,ColumnNamejt3;
+
+    private JTextField StudentId;
+
+    private JTextField ColumnNamejt;
+
+    private JTextField ColumnNamejt2;
+
+    private JTextField ColumnNamejt3;
+
     private JLabel ColumnName;
+
     private JLabel ColumnName2;
+
     private JLabel ColumnName3;
+
     JComboBox ColumnNo;
-    private String strRoom,sql;
+
+    private String strRoom;
+
+    private String sql;
+
     private DatabaseOperation db;
+
     private JTable TableM;
-    public HomeUI()
-    {
+
+    private Container Cp;
+
+    public HomeUI() {
         initComponents();
     }
-    public void initComponents()
-    {
-        String[] sem = {"1st", "2nd", "3rd", "4th", "5th", "6th", "7th", "8th"};
-        String[] faculty = {"BCA", "BBA", "BIM"};
-        String[] seat = {"2", "3"};
-        db = new DatabaseOperation();
+
+    public void initComponents() {
+        String[] sem = { "1st", "2nd", "3rd", "4th", "5th", "6th", "7th", "8th" };
+        String[] faculty = { "BCA", "BBA", "BIM" };
+        String[] seat = { "2", "3" };
+        this.db = new DatabaseOperation();
+        JPanel loggedIn = new JPanel(null);
         JPanel buttonPanel = new JPanel();
-        SelectFacultyPanel = new JPanel();
+        this.SelectFacultyPanel = new JPanel();
         JButton fileList = new JButton("Files");
-        FileListPanel = new JPanel();
-        AddRoomBtn = new JButton("Add");
+        this.FileListPanel = new JPanel();
+        JButton logOut = new JButton("Logout");
+        JButton changePassword = new JButton("<html>Change<br>Password</html>");
+        this.AddRoomBtn = new JButton("Add");
         JButton AddStudentBtn = new JButton("Add");
         JButton next = new JButton("Continue");
-        Back = new JButton("Back");
-        SelectRoom = new JButton("Select");
-        SelectFacultybtn = new JButton("Select");
-        JButton studentList = new JButton("Manage Student");
-        JButton manageRoom = new JButton("Manage Room");
+        this.Back = new JButton("Back");
+        this.SelectRoom = new JButton("Select");
+        this.SelectFacultybtn = new JButton("Select");
+        JButton studentList = new JButton("<html>Manage<br>Student</html>");
+        JButton manageRoom = new JButton("<html>Manage<br>Room</html>");
         JButton planSeat = new JButton("Plan Seat");
-        ContentPanel = new JPanel(new CardLayout());
-        StudentListPanel = new JPanel();
+        this.ContentPanel = new JPanel(new CardLayout());
+        this.StudentListPanel = new JPanel();
         JPanel AddRoomPanel = new JPanel();
         JPanel addStudentPanel = new JPanel();
         JPanel seatPlanPanel = new JPanel();
-        PlanSeatPanel = new JPanel();
-        ColumnPanel = new JPanel(null);
-        ColumnName=new JLabel("Column1 no.of rows");
-        ColumnName2=new JLabel("Column2 no.of rows");
-        ColumnName3=new JLabel("Column3 no.of rows");
-        RoomSelect=new JLabel("Select Room");
-        FacultySelect=new JLabel("Select Faculty");
-        ColumnNamejt=new JTextField(30);
-        ColumnNamejt2=new JTextField(30);
-        ColumnNamejt3=new JTextField(30);
-        RoomPanel = new JPanel(new CardLayout());
+        this.PlanSeatPanel = new JPanel();
+        this.ColumnPanel = new JPanel(null);
+        this.ColumnName = new JLabel("Column1 no.of rows");
+        this.ColumnName2 = new JLabel("Column2 no.of rows");
+        this.ColumnName3 = new JLabel("Column3 no.of rows");
+        this.RoomSelect = new JLabel("Select Room");
+        this.FacultySelect = new JLabel("Select Faculty");
+        this.ColumnNamejt = new JTextField(30);
+        this.ColumnNamejt2 = new JTextField(30);
+        this.ColumnNamejt3 = new JTextField(30);
+        this.RoomPanel = new JPanel(new CardLayout());
         JPanel roomInnerPanel = new JPanel();
-        Name = new JTextField(30);
+        this.Name = new JTextField(30);
         JLabel nameL = new JLabel("FirstName:");
-        LName = new JTextField(30);
+        this.LName = new JTextField(30);
         JLabel LNameL = new JLabel("LastName:");
-        Room = new JTextField(30);
+        this.Room = new JTextField(30);
         JLabel roomL = new JLabel("RoomName");
         JLabel NoColumnL = new JLabel("Number of Column:");
         JLabel numberPerSeat = new JLabel("Student Per Desk");
-        Faculty = new JComboBox(faculty);
-        ColumnNo = new JComboBox(seat);
+        this.Faculty = new JComboBox<>(faculty);
+        this.ColumnNo = new JComboBox<>(seat);
         JLabel facultyL = new JLabel("Faculty:");
-        StudentId = new JTextField(30);
-        Semester = new JComboBox(sem);
+        this.StudentId = new JTextField(30);
+        this.Semester = new JComboBox<>(sem);
         JLabel studentIdL = new JLabel("StudentId:");
+        this.Cp = getContentPane();
+        this.Cp.setLayout(new CardLayout());
         setTitle("Seat Planner");
         setSize(780, 450);
         setResizable(false);
         setVisible(true);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setLayout(null);
-        SelectFacultybtn.addActionListener(new ActionListener() {
-            @Override
+        this.SelectFacultybtn.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                facultySelectAction();
+                HomeUI.this.facultySelectAction();
             }
         });
         fileList.addActionListener(new ActionListener() {
-            @Override
             public void actionPerformed(ActionEvent e) {
-                fileListAction();
+                HomeUI.this.fileListAction();
             }
         });
-        SelectRoom.addActionListener(new ActionListener() {
+        this.SelectRoom.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 try {
-                    roomInfoCollect();
+                    HomeUI.this.roomInfoCollect();
                 } catch (Exception ex) {
                     Msg.showMessage(ex.getMessage());
                 }
             }
         });
         manageRoom.addActionListener(new ActionListener() {
-            @Override
             public void actionPerformed(ActionEvent e) {
-                manageRoomActionPerformed();
+                HomeUI.this.manageRoomActionPerformed();
             }
         });
         studentList.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt)
-            {
-                studentListActionPerformed();
+            public void actionPerformed(ActionEvent evt) {
+                HomeUI.this.studentListActionPerformed();
             }
         });
         next.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt)
-            {
-                nextActionPerformed();
+            public void actionPerformed(ActionEvent evt) {
+                HomeUI.this.nextActionPerformed();
             }
         });
         AddStudentBtn.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt)
-            {
-                formValidate();
+            public void actionPerformed(ActionEvent evt) {
+                HomeUI.this.formValidate();
             }
         });
-        AddRoomBtn.addActionListener(new ActionListener() {
+        logOut.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-               nextColumnAction();
+                HomeUI.this.logOutPasswordAction();
             }
         });
-        Back.addActionListener(new ActionListener() {
+        changePassword.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-               backAction();
+                HomeUI.this.changePasswordAction();
+            }
+        });
+        this.AddRoomBtn.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                HomeUI.this.nextColumnAction();
+            }
+        });
+        this.Back.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                HomeUI.this.backAction();
             }
         });
         buttonPanel.add(studentList);
         buttonPanel.add(fileList);
         buttonPanel.add(manageRoom);
+        buttonPanel.add(changePassword);
+        buttonPanel.add(logOut);
         buttonPanel.setLayout(null);
-        add(buttonPanel);
         buttonPanel.setBounds(0, 0, 160, 360);
         buttonPanel.setBackground(new Color(204, 255, 255));
-
+        loggedIn.add(buttonPanel);
         manageRoom.setFont(new Font("Verdana", 1, 14));
-        manageRoom.setBounds(2, 140, 155, 30);
-
+        manageRoom.setBounds(2, 105, 155, 35);
         studentList.setFont(manageRoom.getFont());
-        studentList.setBounds(2, 100, 155, 30);
-
+        studentList.setBounds(2, 60, 155, 35);
         fileList.setFont(manageRoom.getFont());
-        fileList.setBounds(2, 180, 155, 30);
-
-        StudentListPanel.setBackground(Color.white);
-        StudentListPanel.setLayout(null);
-
+        fileList.setBounds(2, 150, 155, 35);
+        changePassword.setBounds(2, 195, 155, 35);
+        changePassword.setFont(manageRoom.getFont());
+        logOut.setBounds(2, 240, 155, 35);
+        logOut.setFont(manageRoom.getFont());
+        this.StudentListPanel.setBackground(Color.white);
+        this.StudentListPanel.setLayout(null);
         roomInnerPanel.setLayout(null);
-        RoomPanel.setBounds(40, 20, 500, 360);
-        RoomPanel.add(roomInnerPanel,"RIP");
-        RoomPanel.add(ColumnPanel,"CP");
-
+        this.RoomPanel.setBounds(40, 20, 500, 360);
+        this.RoomPanel.add(roomInnerPanel, "RIP");
+        this.RoomPanel.add(this.ColumnPanel, "CP");
         roomL.setBounds(10, 30, 200, 80);
         roomL.setFont(new Font("Verdana", 1, 14));
         roomInnerPanel.add(roomL);
-
-
-        Room.setBounds(30, 85, 200, 30);
-        roomInnerPanel.add(Room);
-
+        this.Room.setBounds(30, 85, 200, 30);
+        roomInnerPanel.add(this.Room);
         NoColumnL.setBounds(10, 93, 200, 80);
         NoColumnL.setFont(new Font("Verdana", 1, 14));
         roomInnerPanel.add(NoColumnL);
-
-        ColumnNo.setBounds(30, 145, 200, 30);
-        roomInnerPanel.add(ColumnNo);
-
+        this.ColumnNo.setBounds(30, 145, 200, 30);
+        roomInnerPanel.add(this.ColumnNo);
         next.setBounds(350, 300, 95, 30);
         roomInnerPanel.add(next);
-        
-        numberPerSeat.setBounds(100,230,150,80);
+        numberPerSeat.setBounds(100, 230, 150, 80);
         numberPerSeat.setFont(new Font("Verdana", 1, 12));
         roomInnerPanel.setBackground(Color.white);
-        AddRoomPanel.add(RoomPanel);
-
+        AddRoomPanel.add(this.RoomPanel);
         AddRoomPanel.setBackground(Color.white);
         AddRoomPanel.setLayout(null);
-
         nameL.setBounds(100, 3, 200, 80);
         nameL.setFont(new Font("Verdana", 1, 12));
         addStudentPanel.add(nameL);
-
-        Name.setBounds(150, 58, 200, 30);
-        addStudentPanel.add(Name);
-
+        this.Name.setBounds(150, 58, 200, 30);
+        addStudentPanel.add(this.Name);
         LNameL.setBounds(100, 63, 200, 80);
         LNameL.setFont(new Font("Verdana", 1, 12));
         addStudentPanel.add(LNameL);
-
-        LName.setBounds(150, 118, 200, 30);
-        addStudentPanel.add(LName);
-
+        this.LName.setBounds(150, 118, 200, 30);
+        addStudentPanel.add(this.LName);
         facultyL.setBounds(100, 123, 200, 80);
         facultyL.setFont(new Font("Verdana", 1, 12));
         addStudentPanel.add(facultyL);
-
-        Faculty.setBounds(150, 183, 200, 30);
-        addStudentPanel.add(Faculty);
-        Faculty.setSelectedIndex(0);
-
-        Semester.setBounds(355, 183, 200, 30);
-        addStudentPanel.add(Semester);
-        Semester.setSelectedIndex(0);
-
+        this.Faculty.setBounds(150, 183, 200, 30);
+        addStudentPanel.add(this.Faculty);
+        this.Faculty.setSelectedIndex(0);
+        this.Semester.setBounds(355, 183, 200, 30);
+        addStudentPanel.add(this.Semester);
+        this.Semester.setSelectedIndex(0);
         studentIdL.setBounds(100, 188, 200, 80);
         studentIdL.setFont(new Font("Verdana", 1, 12));
         addStudentPanel.add(studentIdL);
-
-        StudentId.setBounds(150, 243, 200, 30);
-        addStudentPanel.add(StudentId);
-
+        this.StudentId.setBounds(150, 243, 200, 30);
+        addStudentPanel.add(this.StudentId);
         AddStudentBtn.setBounds(180, 290, 100, 30);
         addStudentPanel.add(AddStudentBtn);
-
         addStudentPanel.setBackground(Color.white);
         addStudentPanel.setLayout(null);
-
-        SelectFacultyPanel.setLayout(null);
-        SelectFacultyPanel.setBackground(Color.white);
-        ContentPanel.add(addStudentPanel, "ASP");
-        ContentPanel.add(FileListPanel,"FLP");
-        ContentPanel.add(StudentListPanel, "SLP");
-        ContentPanel.add(AddRoomPanel, "ARP");
-        ContentPanel.add(PlanSeatPanel,"PSP");
-        ContentPanel.add(SelectFacultyPanel,"SFP");
-        add(ContentPanel);
-        ContentPanel.setBounds(161, 0, 610, 359);
+        this.SelectFacultyPanel.setLayout(null);
+        this.SelectFacultyPanel.setBackground(Color.white);
+        this.ContentPanel.add(addStudentPanel, "ASP");
+        this.ContentPanel.add(this.FileListPanel, "FLP");
+        this.ContentPanel.add(this.StudentListPanel, "SLP");
+        this.ContentPanel.add(AddRoomPanel, "ARP");
+        this.ContentPanel.add(this.PlanSeatPanel, "PSP");
+        this.ContentPanel.add(this.SelectFacultyPanel, "SFP");
+        loggedIn.add(this.ContentPanel);
+        this.ContentPanel.setBounds(161, 0, 610, 359);
         seatPlanPanel.add(planSeat);
         seatPlanPanel.setLayout(null);
-        add(seatPlanPanel);
+        loggedIn.add(seatPlanPanel);
         seatPlanPanel.setBounds(0, 360, 770, 50);
         seatPlanPanel.setBackground(new Color(153, 255, 255));
-
         planSeat.setFont(new Font("Verdana", 1, 14));
         planSeat.setBounds(200, 10, 300, 30);
-
-        PlanSeatPanel.setLayout(null);
+        JFrame.setDefaultLookAndFeelDecorated(true);
+        this.PlanSeatPanel.setLayout(null);
         addWindowListener(new WindowAdapter() {
-            @Override
             public void windowClosing(WindowEvent e) {
-                tempTableDispose();
+                HomeUI.this.tempTableDispose();
             }
         });
         planSeat.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt)
-            {
-                planSeatActionPerformed();
+            public void actionPerformed(ActionEvent evt) {
+                HomeUI.this.planSeatActionPerformed();
+            }
+        });
+        final LoginPanel Lp = new LoginPanel();
+        this.Cp.add("Lp", Lp);
+        this.Cp.add("LL", loggedIn);
+        JButton login = Lp.getLoginBtn();
+        login.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                HomeUI.this.loginActionPerformed(Lp);
             }
         });
     }
 
+    private void logOutPasswordAction() {
+        int x = JOptionPane.showConfirmDialog(new JFrame(), "do you want to  logout?");
+        if (x == 0) {
+            CardLayout cardLayout = (CardLayout)this.Cp.getLayout();
+            cardLayout.show(this.Cp, "Lp");
+        }
+    }
+
+    private void changePasswordAction() {
+        this.ContentPanel.add("CP", new ChangePassword());
+        CardLayout cardLayout = (CardLayout)this.ContentPanel.getLayout();
+        cardLayout.show(this.ContentPanel, "CP");
+    }
+
+    private void loginActionPerformed(LoginPanel Lp) {
+        String userName = Lp.getUserName();
+        String pwd = Lp.getPassword();
+        Lp.setUserName();
+        Lp.setPassword();
+        boolean k = this.db.checkLogin(userName, pwd);
+        if (k) {
+            CardLayout cardLayout = (CardLayout)this.Cp.getLayout();
+            cardLayout.show(this.Cp, "LL");
+        } else {
+            Msg.showMessage("please check credential");
+        }
+    }
+
     private void manageRoomActionPerformed() {
-        JButton AddRoom;
-        ManageRoomPanel manageRoomPanel= new ManageRoomPanel();
-        ContentPanel.add(manageRoomPanel,"MRP");
-        CardLayout cardLayout= (CardLayout) ContentPanel.getLayout();
-        cardLayout.show(ContentPanel,"MRP");
-        AddRoom=manageRoomPanel.getAdd();
+        final ManageRoomPanel manageRoomPanel = new ManageRoomPanel();
+        UpdateRoom UR = manageRoomPanel.getUR();
+        this.ContentPanel.add(manageRoomPanel, "MRP");
+        this.ContentPanel.add(UR, "UR");
+        CardLayout cardLayout = (CardLayout)this.ContentPanel.getLayout();
+        cardLayout.show(this.ContentPanel, "MRP");
+        JButton AddRoom = manageRoomPanel.getAdd();
+        JButton Update = manageRoomPanel.getUpdate();
         AddRoom.addActionListener(new ActionListener() {
-            @Override
             public void actionPerformed(ActionEvent e) {
-                AddRoomActionPerformed();
+                HomeUI.this.AddRoomActionPerformed();
+            }
+        });
+        Update.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                JTable table1 = manageRoomPanel.getTableM();
+                if (table1.getSelectedRow() == -1) {
+                    Msg.showMessage("please select at least one row");
+                    return;
+                }
+                int x = JOptionPane.showConfirmDialog(new JFrame(), "do you want to update room");
+                if (x == 0) {
+                    manageRoomPanel.updateActionPerformed();
+                    CardLayout cardLayout = (CardLayout)HomeUI.this.ContentPanel.getLayout();
+                    cardLayout.show(HomeUI.this.ContentPanel, "UR");
+                }
             }
         });
     }
 
     private void fileListAction() {
-        Vector<String> name;
         FileList fls = new FileList();
-        name =fls.list();
-        FileListPanel.setLayout(null);
-        FileListPanel.removeAll();
-        FileListPanel.setBackground(Color.white);
-        int xaxis=2;
-        int yaxis=15;
-        int height=30;
-        int width =300;
-        int i=1;
-        for (String x:name ) {
-            JLabel fileName = new JLabel(i+". "+x);
+        Vector<String> name = fls.list();
+        this.FileListPanel.setLayout(null);
+        this.FileListPanel.removeAll();
+        this.FileListPanel.setBackground(Color.white);
+        int xaxis = 2;
+        int yaxis = 15;
+        int height = 30;
+        int width = 300;
+        int i = 1;
+        for (String x : name) {
+            JLabel fileName = new JLabel("" + i + "." + x);
             JButton fileButton = new JButton("view");
             fileButton.setActionCommand(x);
-            fileName.setFont(new Font("verdana",1,14));
-            fileName.setFont(new Font("verdana",1,14));
+            fileName.setFont(new Font("verdana", 1, 14));
+            fileName.setFont(new Font("verdana", 1, 14));
             i++;
-            fileName.setBounds(xaxis,yaxis,width,height);
-            fileButton.setBounds(fileName.getWidth()+10,yaxis,70,30);
-            yaxis+=50;
-            FileListPanel.add(fileName);
-            FileListPanel.add(fileButton);
+            fileName.setBounds(xaxis, yaxis, width, height);
+            fileButton.setBounds(fileName.getWidth() + 10, yaxis, 70, 30);
+            yaxis += 50;
+            this.FileListPanel.add(fileName);
+            this.FileListPanel.add(fileButton);
             fileButton.addActionListener(new ActionListener() {
-                @Override
                 public void actionPerformed(ActionEvent e) {
-                    fileOpen(e);
+                    HomeUI.this.fileOpen(e);
                 }
             });
         }
-        CardLayout cd = (CardLayout) ContentPanel.getLayout();
-        cd.show(ContentPanel,"FLP");
+        CardLayout cd = (CardLayout)this.ContentPanel.getLayout();
+        cd.show(this.ContentPanel, "FLP");
     }
 
     private void fileOpen(ActionEvent e) {
-        String name= e.getActionCommand();
-        File f1 = new File("D:\\Seatplanner\\"+name);
+        String name = e.getActionCommand();
+        File f1 = new File("D:\\Seatplanner\\" + name);
         try {
             Desktop.getDesktop().open(f1);
         } catch (IOException ex) {
@@ -340,394 +418,378 @@ public class HomeUI extends JFrame {
         }
     }
 
-    private void facultySelectAction(){
+    private void facultySelectAction() {
         try {
             FacultyInfoCollect();
             addBoXItem();
-            CardLayout cd = (CardLayout) ContentPanel.getLayout();
-            cd.show(ContentPanel,"PSP");
-        } catch (Exception e) {
-           Msg.showMessage(e.getMessage());
-        }
-    }
-    private void tempTableDispose() {
-        db.deleteTempTable();
-    }
-    private void roomInfoCollect() throws Exception {
-        List<String> RoomName = jlRoom.getSelectedValuesList();
-        if(RoomName.isEmpty()){
-            throw new Exception("please select at least one room");
-        }
-        tempTableDispose();
-        db.createTempTable(sql);
-        try {
-            checkError(RoomName);
-            roomDataCollect(RoomName);
+            CardLayout cd = (CardLayout)this.ContentPanel.getLayout();
+            cd.show(this.ContentPanel, "PSP");
         } catch (Exception e) {
             Msg.showMessage(e.getMessage());
         }
     }
-    private void checkError(List<String> RoomName) throws Exception {
-        RoomData rd = new RoomData();
-        int totalStudent=db.countStudent();
-        int totalRoom=rd.totalSeat(RoomName);
-        if(totalStudent==-1)
-            throw new Exception("error");
-        if(totalRoom<totalStudent)
-        {
-            throw new Exception("seat is less than total student\ntotal Seat="+totalRoom+"\ntotal student="+totalStudent);
+
+    private void tempTableDispose() {
+        this.db.deleteTempTable();
+    }
+
+    private void roomInfoCollect() throws Exception {
+        List<String> RoomName = this.jlRoom.getSelectedValuesList();
+        if (RoomName.isEmpty())
+            throw new Exception("please select at least one room");
+        tempTableDispose();
+        this.db.createTempTable(this.sql);
+        try {
+            checkError(RoomName);
+            roomDataCollect(RoomName);
+        } catch (Exception e) {
+            e.printStackTrace();
+            Msg.showMessage(e.getMessage());
         }
     }
-    private void roomDataCollect(List<String> RoomName)
-    {
-        int column,row;
+
+    private void checkError(List<String> RoomName) throws Exception {
+        RoomData rd = new RoomData();
+        int totalStudent = this.db.countStudent();
+        int totalRoom = rd.totalSeat(RoomName);
+        if (totalStudent == -1)
+            throw new Exception("error");
+        if (totalRoom < totalStudent)
+            throw new Exception("seat is less than total student\ntotal Seat=" + totalRoom + "\ntotal student=" + totalStudent);
+    }
+
+    private void roomDataCollect(List<String> RoomName) {
         RoomData rd = new RoomData();
         ExcelOperation ex = new ExcelOperation();
-        for(String x:RoomName)
-        {
-            column=rd.getColumn(x);
+        for (String x : RoomName) {
+            int column = rd.getColumn(x);
             ex.writeHeading(x);
-            for (int i = 1; i<=column; i++) {
-                row=rd.getRow(i,x);
+            for (int i = 1; i <= column; i++) {
+                int row = rd.getRow(i, x);
                 ex.writeRows(row);
             }
         }
         ex.writeFile();
     }
-    private void FacultyInfoCollect() throws Exception {
-        List<String> Faculty = jl.getSelectedValuesList();
-        if(Faculty.isEmpty()) {
-            throw new Exception("please select at least one");
-        }
-        sql=Faculty.get(0);
-        Faculty.remove(sql);
-        sql="("+"'"+sql+"'";
-        for(String x:Faculty){
-            sql=sql+","+"'"+x+"'";
-        }
-        sql="insert into temp Select * from studentlist where faculty in "+sql+")" ;
-    }
-    private void addFacultyItem(){
-        SelectFacultyPanel.removeAll();
-        SelectFacultyPanel.repaint();
-        DatabaseOperation FacultyChoosen = new DatabaseOperation();
-        Vector <String> Faculty=FacultyChoosen.distinctFaculty();
 
-        FacultySelect.setFont(new Font("verdana",1,16));
-        FacultySelect.setBounds(50, 10, 200, 30);
-        SelectFacultyPanel.add(FacultySelect);
-        jl= new JList(Faculty);
-        jl.setBackground(new Color(255,255,255));
-        jl.setFont(new Font("verdana",1,14));
-        JScrollPane jsp = new JScrollPane(jl);
+    private void FacultyInfoCollect() throws Exception {
+        List<String> Faculty = this.jl.getSelectedValuesList();
+        if (Faculty.isEmpty())
+            throw new Exception("please select at least one");
+        this.sql = Faculty.get(0);
+        Faculty.remove(this.sql);
+        this.sql = "('" + this.sql + "'";
+        for (String name : Faculty)
+            this.sql += ",'" + name + "'";
+        this.sql = "insert into temp Select * from studentlist where faculty in " + this.sql + ")";
+        System.out.println(sql);
+    }
+
+    private void addFacultyItem() {
+        this.SelectFacultyPanel.removeAll();
+        this.SelectFacultyPanel.repaint();
+        DatabaseOperation FacultyChoosen = new DatabaseOperation();
+        Vector<String> Faculty = FacultyChoosen.distinctFaculty();
+        this.FacultySelect.setFont(new Font("verdana", 1, 16));
+        this.FacultySelect.setBounds(50, 10, 200, 30);
+        this.SelectFacultyPanel.add(this.FacultySelect);
+        this.jl = new JList<>(Faculty);
+        this.jl.setBackground(new Color(255, 255, 255));
+        this.jl.setFont(new Font("verdana", 1, 14));
+        JScrollPane jsp = new JScrollPane(this.jl);
         jsp.setBackground(Color.white);
-        jsp.setBounds(10,40,SelectFacultyPanel.getWidth()-12,SelectFacultyPanel.getHeight()-200);
-        SelectFacultyPanel.add(jsp);
-        SelectFacultybtn.setBounds(SelectFacultyPanel.getWidth()/2-100,jsp.getHeight()+100,120,30);
-        SelectFacultyPanel.add(SelectFacultybtn);
-        SelectFacultybtn.setFont(new Font("verdana",1,14));
-        PlanSeatPanel.add(SelectRoom);
+        jsp.setBounds(10, 40, this.SelectFacultyPanel.getWidth() - 12, this.SelectFacultyPanel.getHeight() - 200);
+        this.SelectFacultyPanel.add(jsp);
+        this.SelectFacultybtn.setBounds(this.SelectFacultyPanel.getWidth() / 2 - 100, jsp.getHeight() + 100, 120, 30);
+        this.SelectFacultyPanel.add(this.SelectFacultybtn);
+        this.SelectFacultybtn.setFont(new Font("verdana", 1, 14));
+        this.PlanSeatPanel.add(this.SelectRoom);
     }
-    private void planSeatActionPerformed()
-    {
+
+    private void planSeatActionPerformed() {
         addFacultyItem();
-        CardLayout cardLayout = (CardLayout)    ContentPanel.getLayout();
-        cardLayout.show(ContentPanel, "SFP");
+        CardLayout cardLayout = (CardLayout)this.ContentPanel.getLayout();
+        cardLayout.show(this.ContentPanel, "SFP");
     }
-    private void addBoXItem()
-    {
-        Vector <String> roomName;
+
+    private void addBoXItem() {
         RoomData rd = new RoomData();
-        roomName=rd.retrieveTableName();
-        PlanSeatPanel.removeAll();
-        PlanSeatPanel.repaint();
-        RoomSelect.setFont(new Font("verdana",1,16));
-        RoomSelect.setBounds(10, 10, 200, 30);
-        PlanSeatPanel.add(RoomSelect);
-        jlRoom=new JList<>(roomName);
-        jlRoom.setFont(new Font("verdana",1,14));
-        jlRoom.setBackground(Color.white);
-        JScrollPane jsp = new JScrollPane(jlRoom);
-        jsp.setBounds(10,40,PlanSeatPanel.getWidth()-12,PlanSeatPanel.getHeight()-200);
-        SelectRoom.setFont(new Font("verdana",1,14));
-        SelectRoom.setBounds(PlanSeatPanel.getWidth()/2-100,jsp.getHeight()+100,120,30);
-        PlanSeatPanel.add(jsp);
-        PlanSeatPanel.add(SelectRoom);
+        Vector<String> roomName = rd.retrieveTableName();
+        this.PlanSeatPanel.removeAll();
+        this.PlanSeatPanel.repaint();
+        this.RoomSelect.setFont(new Font("verdana", 1, 16));
+        this.RoomSelect.setBounds(10, 10, 200, 30);
+        this.PlanSeatPanel.add(this.RoomSelect);
+        this.jlRoom = new JList<>(roomName);
+        this.jlRoom.setFont(new Font("verdana", 1, 14));
+        this.jlRoom.setBackground(Color.white);
+        JScrollPane jsp = new JScrollPane(this.jlRoom);
+        jsp.setBounds(10, 40, this.PlanSeatPanel.getWidth() - 12, this.PlanSeatPanel.getHeight() - 200);
+        this.SelectRoom.setFont(new Font("verdana", 1, 14));
+        this.SelectRoom.setBounds(this.PlanSeatPanel.getWidth() / 2 - 100, jsp.getHeight() + 100, 120, 30);
+        this.PlanSeatPanel.add(jsp);
+        this.PlanSeatPanel.add(this.SelectRoom);
     }
+
     private void backAction() {
-        CardLayout cardLayout = (CardLayout) RoomPanel.getLayout();
-        cardLayout.show(RoomPanel, "RIP");
+        CardLayout cardLayout = (CardLayout)this.RoomPanel.getLayout();
+        cardLayout.show(this.RoomPanel, "RIP");
     }
+
     private void nextColumnAction() {
-        int s1[]=new int[3];
+        int[] s1 = new int[3];
         try {
-            s1[0] = parseInt(ColumnNamejt.getText().trim());
-            ColumnNamejt.setText("");
-            s1[1] = parseInt(ColumnNamejt2.getText().trim());
-            ColumnNamejt2.setText("");
-            ColumnNamejt2.setText("");
-            if (ColumnNo.getSelectedItem().equals("3")) {
-                s1[2] = parseInt(ColumnNamejt3.getText().trim());
-                ColumnNamejt3.setText("");
+            s1[0] = Integer.parseInt(this.ColumnNamejt.getText().trim());
+            this.ColumnNamejt.setText("");
+            s1[1] = Integer.parseInt(this.ColumnNamejt2.getText().trim());
+            this.ColumnNamejt2.setText("");
+            this.ColumnNamejt2.setText("");
+            if (this.ColumnNo.getSelectedItem().equals("3")) {
+                s1[2] = Integer.parseInt(this.ColumnNamejt3.getText().trim());
+                this.ColumnNamejt3.setText("");
             }
             RoomData rd = new RoomData();
             for (int i = 0; i < 3; i++) {
-                if(i==2&&s1[2]==0)
-                    continue;
-                rd.addData(strRoom,s1[i],i+1);
+                if (i != 2 || s1[2] != 0)
+                    rd.addData(this.strRoom, s1[i], i + 1);
             }
-            CardLayout cardLayout = (CardLayout) RoomPanel.getLayout();
-            cardLayout.show(RoomPanel, "RIP");
+            CardLayout cardLayout = (CardLayout)this.RoomPanel.getLayout();
+            cardLayout.show(this.RoomPanel, "RIP");
         } catch (Exception e) {
             Msg.showError("should only contain number");
         }
     }
-    private void addStudentActionPerformed()
-    {
-        CardLayout cardLayout = (CardLayout) ContentPanel.getLayout();
-        cardLayout.show(ContentPanel, "ASP");
-    }
-    private void AddRoomActionPerformed()
-    {
-        CardLayout cardLayout = (CardLayout) ContentPanel.getLayout();
-        cardLayout.show(ContentPanel, "ARP");
+
+    private void addStudentActionPerformed() {
+        CardLayout cardLayout = (CardLayout)this.ContentPanel.getLayout();
+        cardLayout.show(this.ContentPanel, "ASP");
     }
 
-    private void studentListActionPerformed()
-    {
-        CardLayout cardLayout = (CardLayout) ContentPanel.getLayout();
-        cardLayout.show(ContentPanel, "SLP");
+    private void AddRoomActionPerformed() {
+        CardLayout cardLayout = (CardLayout)this.ContentPanel.getLayout();
+        cardLayout.show(this.ContentPanel, "ARP");
+    }
+
+    private void studentListActionPerformed() {
+        CardLayout cardLayout = (CardLayout)this.ContentPanel.getLayout();
+        cardLayout.show(this.ContentPanel, "SLP");
         showData();
     }
-    public void showData(){
-        StudentListPanel.removeAll();
-        StudentListPanel.repaint();
-        Vector<Student> StudentData= new Vector<>();
-        ResultSet r= db.displayData();
-        while(true)
-        {
+
+    public void showData() {
+        this.StudentListPanel.removeAll();
+        this.StudentListPanel.repaint();
+        Vector<Student> StudentData = new Vector<>();
+        ResultSet r = this.db.displayData();
+        while (true) {
             try {
                 if (!r.next())
                     break;
-                Student s=new Student(r.getInt("studentid"),r.getString("name"),r.getString("faculty"));
+                Student s = new Student(r.getInt("studentid"), r.getString("name"), r.getString("faculty"));
                 StudentData.add(s);
             } catch (SQLException e) {
-               Msg.showError("error");
+                Msg.showError("error");
             }
         }
-        String [] ColumnName = {"ID","Name","Faculty"};
+        String[] ColumnName = { "ID", "Name", "Faculty" };
         DefaultTableModel StudentTable = new DefaultTableModel();
-        StudentTable.setColumnIdentifiers(ColumnName);
-        Object[] row=new Object[3];
-        for(Student s:StudentData)
-        {
-            row[0]=s.getStudentid();
-            row[1]=s.getName();
-            row[2]=s.getFaculty();
+        StudentTable.setColumnIdentifiers((Object[])ColumnName);
+        Object[] row = new Object[3];
+        for (Student s : StudentData) {
+            row[0] = Integer.valueOf(s.getStudentid());
+            row[1] = s.getName();
+            row[2] = s.getFaculty();
             StudentTable.addRow(row);
         }
-        TableM=new JTable(StudentTable){
-            @Override
+        this.TableM = new JTable(StudentTable) {
             public boolean editCellAt(int row, int column, EventObject e) {
                 return false;
             }
         };
-        TableM.setFont(new Font("verdana",1,12));
+        this.TableM.setFont(new Font("verdana", 1, 12));
         JButton Add = new JButton("Add Student");
         JButton Delete = new JButton("Delete");
         JButton Update = new JButton("Update");
-        Delete.setBounds(5,3,150,30);
-        Delete.setFont(new Font("verdana",1,16));
-        Add.setBounds(Delete.getWidth()+75,3,150,30);
+        Delete.setBounds(5, 3, 150, 30);
+        Delete.setFont(new Font("verdana", 1, 16));
+        Add.setBounds(Delete.getWidth() + 75, 3, 150, 30);
         Add.setFont(Delete.getFont());
         Update.setFont(Delete.getFont());
-        Update.setBounds(ContentPanel.getWidth()-160, 3, 150,30);
+        Update.setBounds(this.ContentPanel.getWidth() - 160, 3, 150, 30);
         Add.addActionListener(new ActionListener() {
-            @Override
             public void actionPerformed(ActionEvent e) {
-                addStudentActionPerformed();
+                HomeUI.this.addStudentActionPerformed();
             }
         });
         Delete.addActionListener(new ActionListener() {
-            @Override
             public void actionPerformed(ActionEvent e) {
-                deleteActionPerformed();
+                HomeUI.this.deleteActionPerformed();
             }
         });
         Update.addActionListener(new ActionListener() {
-            @Override
             public void actionPerformed(ActionEvent e) {
-                updateActionPerformed();
+                HomeUI.this.updateActionPerformed();
             }
         });
-        JScrollPane SP=new JScrollPane(TableM);
-        SP.setBounds(2, 40,ContentPanel.getWidth()-3,ContentPanel.getHeight()-45);
-        StudentListPanel.add(Delete);
-        StudentListPanel.add(Update);
-        StudentListPanel.add(Add);
-        StudentListPanel.add(SP);
+        JScrollPane SP = new JScrollPane(this.TableM);
+        SP.setBounds(2, 40, this.ContentPanel.getWidth() - 3, this.ContentPanel.getHeight() - 45);
+        this.StudentListPanel.add(Delete);
+        this.StudentListPanel.add(Update);
+        this.StudentListPanel.add(Add);
+        this.StudentListPanel.add(SP);
     }
 
     private void updateActionPerformed() {
         Update UpdatePanel = new Update();
-        ContentPanel.add(UpdatePanel,"UPD");
-        int row = TableM.getSelectedRow();
-        if(row==-1){
+        this.ContentPanel.add(UpdatePanel, "UPD");
+        int row = this.TableM.getSelectedRow();
+        if (row == -1) {
             Msg.showMessage("please Select row in table");
             return;
         }
-        String sid = TableM.getModel().getValueAt(row,0).toString().trim();
-        String [] Name=TableM.getModel().getValueAt(row,1).toString().trim().split(" ");
-        String firstnamev=Name[0];
-        String lastnamev=Name[1];
-        String [] Facultyv=TableM.getModel().getValueAt(row,2).toString().trim().split(" ");
+        String sid = this.TableM.getModel().getValueAt(row, 0).toString().trim();
+        String[] Name = this.TableM.getModel().getValueAt(row, 1).toString().trim().split(" ");
+        String firstnamev = Name[0];
+        String lastnamev = Name[1];
+        String[] Facultyv = this.TableM.getModel().getValueAt(row, 2).toString().trim().split(" ");
         String coursev = Facultyv[0];
         String semesterv = Facultyv[1];
-        System.out.println(coursev+" "+semesterv);
+        System.out.println(coursev + " " + coursev);
         UpdatePanel.setFirstName(firstnamev);
         UpdatePanel.setLastName(lastnamev);
         UpdatePanel.setFacultyCb(coursev);
         UpdatePanel.setSemesterCb(semesterv);
         UpdatePanel.setStudentId(sid);
-        CardLayout cardLayout = (CardLayout) ContentPanel.getLayout();
-        cardLayout.show(ContentPanel, "UPD");
+        CardLayout cardLayout = (CardLayout)this.ContentPanel.getLayout();
+        cardLayout.show(this.ContentPanel, "UPD");
     }
 
-    private void deleteActionPerformed(){
-        int row =TableM.getSelectedRow();
-        if(row==-1){
+    private void deleteActionPerformed() {
+        int row = this.TableM.getSelectedRow();
+        if (row == -1) {
             Msg.showMessage("please Select row in table");
             return;
         }
-        String value=TableM.getModel().getValueAt(row,0).toString();
-        int x=JOptionPane.showConfirmDialog(this,"do you want to delete Student with id "+value);
-        if(x == JOptionPane.YES_OPTION)
-        {
-            db.deleteData(Integer.parseInt(value));
+        String value = this.TableM.getModel().getValueAt(row, 0).toString();
+        int x = JOptionPane.showConfirmDialog(this, "do you want to delete Student with id " + value);
+        if (x == 0) {
+            this.db.deleteData(Integer.parseInt(value));
             showData();
             Msg.showMessage("sucessfully deleted");
         }
     }
-    private void formValidate()
-    {
-        int storeStudentId=0;
-        boolean flag=true;
-        String strName,strLName;
 
+    private void formValidate() {
+        int storeStudentId = 0;
+        boolean flag = true;
         try {
-            strName= Name.getText().trim();
-            strLName= LName.getText().trim();
+            String strName = this.Name.getText().trim();
+            String strLName = this.LName.getText().trim();
             nameValidate(strLName);
             nameValidate(strName);
-            try{
-                storeStudentId=parseInt(StudentId.getText().trim());
-            }catch(NumberFormatException e){
-              Msg.showError("Student id should only contain Number");
-              StudentId.setText("");
-              flag=false;
+            try {
+                storeStudentId = Integer.parseInt(this.StudentId.getText().trim());
+            } catch (NumberFormatException e) {
+                Msg.showError("Student id should only contain Number");
+                this.StudentId.setText("");
+                flag = false;
             }
-            if(flag){
-                db.insertData(storeStudentId,strName+" "+strLName, (String) Faculty.getSelectedItem(), (String) Semester.getSelectedItem());
-                Name.setText("");
-                LName.setText("");
-                StudentId.setText("");
-                Faculty.setSelectedIndex(0);
-                Semester.setSelectedIndex(0);
+            if (flag) {
+                this.db.insertData(storeStudentId, strName + " " + strName, (String)this.Faculty.getSelectedItem(), (String)this.Semester.getSelectedItem());
+                this.Name.setText("");
+                this.LName.setText("");
+                this.StudentId.setText("");
+                this.Faculty.setSelectedIndex(0);
+                this.Semester.setSelectedIndex(0);
             }
         } catch (Exception ex) {
             Msg.showError(ex.getMessage());
-            Name.setText("");
-            LName.setText("");
+            this.Name.setText("");
+            this.LName.setText("");
         }
     }
-    private void nameValidate( String s ) throws Exception
-    {
-            if(s.isEmpty())
-                throw new Exception("field is empty");
-            Pattern p = Pattern.compile("[0-9]");
-            Matcher m = p.matcher( s );
-            if(m.find())
-                throw new Exception("name cannot contain number and Special character");
-            else if(s.contains("_"))
-                throw new Exception("name cannot contain number and Special character");
-            else
-            {
-                p = Pattern.compile("\\W");
-                m = p.matcher( s );
-                if(m.find())
-                {
-                    throw new Exception("name cannot contain number and Special character");
-                }
-            }
+
+    private void nameValidate(String s) throws Exception {
+        if (s.isEmpty())
+            throw new Exception("field is empty");
+        Pattern p = Pattern.compile("[0-9]");
+        Matcher m = p.matcher(s);
+        if (m.find())
+            throw new Exception("name cannot contain number and Special character");
+        if (s.contains("_"))
+            throw new Exception("name cannot contain number and Special character");
+        p = Pattern.compile("\\W");
+        m = p.matcher(s);
+        if (m.find())
+            throw new Exception("name cannot contain number and Special character");
     }
+
     private void nextActionPerformed() {
         RoomData rd = new RoomData();
-        strRoom = Room.getText().trim();
-        if (strRoom.isEmpty()) {
+        this.strRoom = this.Room.getText().trim();
+        if (this.strRoom.isEmpty()) {
             Msg.showError("field is empty");
             return;
         }
-        char[] num  = strRoom.toCharArray();
+        char[] num = this.strRoom.toCharArray();
         StringBuilder sb = new StringBuilder();
         for (char c : num) {
-            if (Character.isDigit(c)) {
+            if (Character.isDigit(c))
                 sb.append(c);
-            }
         }
-        if(sb.length()==strRoom.length())
-        {
+        if (sb.length() == this.strRoom.length()) {
             Msg.showError("Room name shouldnot only contain number");
             return;
         }
-        if(rd.checkTable(strRoom))
-        {
+        if (rd.checkTable(this.strRoom)) {
             Msg.showError("Room Already Exist");
             return;
         }
-        String strColumn = (String) ColumnNo.getSelectedItem();
-        ColumnPanel.setBackground(Color.white);
+        String strColumn = (String)this.ColumnNo.getSelectedItem();
+        this.ColumnPanel.setBackground(Color.white);
         assert strColumn != null;
         if (strColumn.equals("2")) {
-            ColumnPanel.removeAll();
-            ColumnPanel.repaint();
-            ColumnPanel.add(ColumnName);
-            ColumnName.setBounds(10, 3, 200, 80);
-            ColumnName.setFont(new Font("Verdana", 1, 14));
-            ColumnPanel.add(ColumnNamejt);
-            ColumnNamejt.setBounds(50, 54, 200, 30);
-            ColumnPanel.add(ColumnName2);
-            ColumnName2.setBounds(10, 60, 200, 80);
-            ColumnName2.setFont(new Font("Verdana", 1, 14));
-            ColumnPanel.add(ColumnNamejt2);
-            ColumnNamejt2.setBounds(50, 111, 200, 30);
+            this.ColumnPanel.removeAll();
+            this.ColumnPanel.repaint();
+            this.ColumnPanel.add(this.ColumnName);
+            this.ColumnName.setBounds(10, 3, 200, 80);
+            this.ColumnName.setFont(new Font("Verdana", 1, 14));
+            this.ColumnPanel.add(this.ColumnNamejt);
+            this.ColumnNamejt.setBounds(50, 54, 200, 30);
+            this.ColumnPanel.add(this.ColumnName2);
+            this.ColumnName2.setBounds(10, 60, 200, 80);
+            this.ColumnName2.setFont(new Font("Verdana", 1, 14));
+            this.ColumnPanel.add(this.ColumnNamejt2);
+            this.ColumnNamejt2.setBounds(50, 111, 200, 30);
         } else {
-            ColumnPanel.removeAll();
-            ColumnPanel.revalidate();
-            ColumnPanel.repaint();
-            ColumnPanel.add(ColumnName);
-            ColumnName.setBounds(10, 3, 200, 80);
-            ColumnName.setFont(new Font("Verdana", 1, 14));
-            ColumnPanel.add(ColumnNamejt);
-            ColumnNamejt.setBounds(50, 54, 200, 30);
-            ColumnPanel.add(ColumnName2);
-            ColumnName2.setBounds(10, 60, 200, 80);
-            ColumnName2.setFont(new Font("Verdana", 1, 14));
-            ColumnPanel.add(ColumnNamejt2);
-            ColumnNamejt2.setBounds(50, 111, 200, 30);
-            ColumnPanel.add(ColumnName3);
-            ColumnName3.setBounds(10, 117, 200, 80);
-            ColumnName3.setFont(new Font("Verdana", 1, 14));
-            ColumnPanel.add(ColumnNamejt3);
-            ColumnNamejt3.setBounds(50, 168, 200, 30);
+            this.ColumnPanel.removeAll();
+            this.ColumnPanel.revalidate();
+            this.ColumnPanel.repaint();
+            this.ColumnPanel.add(this.ColumnName);
+            this.ColumnName.setBounds(10, 3, 200, 80);
+            this.ColumnName.setFont(new Font("Verdana", 1, 14));
+            this.ColumnPanel.add(this.ColumnNamejt);
+            this.ColumnNamejt.setBounds(50, 54, 200, 30);
+            this.ColumnPanel.add(this.ColumnName2);
+            this.ColumnName2.setBounds(10, 60, 200, 80);
+            this.ColumnName2.setFont(new Font("Verdana", 1, 14));
+            this.ColumnPanel.add(this.ColumnNamejt2);
+            this.ColumnNamejt2.setBounds(50, 111, 200, 30);
+            this.ColumnPanel.add(this.ColumnName3);
+            this.ColumnName3.setBounds(10, 117, 200, 80);
+            this.ColumnName3.setFont(new Font("Verdana", 1, 14));
+            this.ColumnPanel.add(this.ColumnNamejt3);
+            this.ColumnNamejt3.setBounds(50, 168, 200, 30);
         }
-        ColumnPanel.add(AddRoomBtn);
-        AddRoomBtn.setBounds(350, 300, 95, 30);
-        ColumnPanel.add(Back);
-        Back.setBounds(2, 300, 95, 30);
-        CardLayout cd = (CardLayout) RoomPanel.getLayout();
-        cd.show(RoomPanel, "CP");
+        this.ColumnPanel.add(this.AddRoomBtn);
+        this.AddRoomBtn.setBounds(350, 300, 95, 30);
+        this.ColumnPanel.add(this.Back);
+        this.Back.setBounds(2, 300, 95, 30);
+        CardLayout cd = (CardLayout)this.RoomPanel.getLayout();
+        cd.show(this.RoomPanel, "CP");
     }
+
     public static void main(String[] args) {
-            new HomeUI();
+        new HomeUI();
     }
 }
