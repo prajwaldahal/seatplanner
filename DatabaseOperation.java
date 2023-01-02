@@ -1,10 +1,4 @@
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.SQLIntegrityConstraintViolationException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.Vector;
 
 public class DatabaseOperation {
@@ -29,11 +23,13 @@ public class DatabaseOperation {
             ps.setString(3, faculty + " " + semester);
             try {
                 ps.executeUpdate();
+                Msg.showMessage("student Added");
             } catch (SQLIntegrityConstraintViolationException error) {
                 Msg.showError("student id already used");
             }
         } catch (SQLException se) {
             Msg.showError("operation error");
+            System.out.println(se);
         }
     }
 
@@ -149,7 +145,6 @@ public class DatabaseOperation {
                 FacultyList.add(r2.getString("faculty"));
         } catch (Exception e) {
             Msg.showError(" error");
-            System.exit(1);
         }
         return FacultyList;
     }
@@ -160,7 +155,6 @@ public class DatabaseOperation {
             deleteSt.executeUpdate("delete from studentlist where studentid=" + sid);
         } catch (Exception e) {
             Msg.showError("error");
-            System.exit(1);
         }
     }
 
@@ -171,6 +165,7 @@ public class DatabaseOperation {
             pst.setString(2, s.getFaculty());
             pst.setInt(3, s.getStudentid());
             pst.executeUpdate();
+            Msg.showMessage("student record Updated");
         } catch (SQLException e) {
             Msg.showError("cant update");
         }

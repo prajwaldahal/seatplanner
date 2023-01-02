@@ -1,12 +1,7 @@
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.LayoutManager;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
 
 public class UpdateRoom extends JPanel {
     JButton Update;
@@ -57,6 +52,9 @@ public class UpdateRoom extends JPanel {
     }
 
     private void initComponent() {
+        removeAll();
+        repaint();
+        revalidate();
         this.Update = new JButton("Update");
         this.RoomNameL = new JLabel("Room Name");
         this.ColumnNoL = new JLabel("No.of Column");
@@ -71,32 +69,32 @@ public class UpdateRoom extends JPanel {
         this.Row2 = new JTextField(30);
         this.Row3 = new JTextField(30);
         this.RoomNameL.setBounds(100, -10, 200, 80);
-        this.RoomNameL.setFont(new Font("Verdana", 1, 12));
+        this.RoomNameL.setFont(new Font("Verdana", Font.BOLD, 12));
         add(this.RoomNameL);
         this.RoomName.setBounds(150, 43, 200, 30);
         add(this.RoomName);
         this.ColumnNoL.setBounds(100, 48, 200, 80);
-        this.ColumnNoL.setFont(new Font("Verdana", 1, 12));
+        this.ColumnNoL.setFont(new Font("Verdana", Font.BOLD, 12));
         add(this.ColumnNoL);
         this.ColumnNo.setBounds(150, 103, 200, 30);
         add(this.ColumnNo);
         this.Row1L.setBounds(100, 108, 200, 80);
-        this.Row1L.setFont(new Font("Verdana", 1, 12));
+        this.Row1L.setFont(new Font("Verdana", Font.BOLD, 12));
         add(this.Row1L);
         this.Row1.setBounds(150, 168, 200, 30);
         add(this.Row1);
         this.Row2L.setBounds(100, 173, 200, 80);
-        this.Row2L.setFont(new Font("Verdana", 1, 12));
+        this.Row2L.setFont(new Font("Verdana", Font.BOLD, 12));
         add(this.Row2L);
         this.Row2.setBounds(150, 232, 200, 30);
         add(this.Row2);
         this.Row2L.setBounds(100, 172, 200, 80);
-        this.Row2L.setFont(new Font("Verdana", 1, 12));
+        this.Row2L.setFont(new Font("Verdana", Font.BOLD, 12));
         add(this.Row2L);
         this.Row2.setBounds(150, 232, 200, 30);
         add(this.Row2);
         this.Row3L.setBounds(100, 237, 200, 80);
-        this.Row3L.setFont(new Font("Verdana", 1, 12));
+        this.Row3L.setFont(new Font("Verdana", Font.BOLD, 12));
         add(this.Row3L);
         this.Row3.setBounds(150, 285, 200, 30);
         add(this.Row3);
@@ -107,7 +105,7 @@ public class UpdateRoom extends JPanel {
                 UpdateRoom.this.updateActionPerformed();
             }
         });
-        setLayout((LayoutManager)null);
+        setLayout(null);
         setBackground(Color.white);
     }
 
@@ -120,11 +118,12 @@ public class UpdateRoom extends JPanel {
         Room r = new Room(roomName, col, row1, row2, row3);
         RoomData rd = new RoomData();
         rd.updateData(r);
+        Msg.showMessage("room updated");
+        initComponent();
     }
 
     private void columnNocheck() {
         String storeColumn = this.ColumnNo.getText();
-        System.out.println(storeColumn);
         if (storeColumn.equals("2")) {
             this.Row3.setText("0");
             this.Row3.setEditable(false);

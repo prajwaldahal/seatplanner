@@ -1,7 +1,4 @@
-import org.apache.poi.ss.usermodel.BorderStyle;
-import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.HorizontalAlignment;
-import org.apache.poi.ss.usermodel.VerticalAlignment;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.*;
 
@@ -11,7 +8,6 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Vector;
-
 public class ExcelOperation {
     Vector<Integer> storeIndex = new Vector<>();
 
@@ -83,9 +79,9 @@ public class ExcelOperation {
                 this.student = this.Sheet1.createRow(i);
             int index = this.storeIndex.firstElement();
             for (int k = index; k <= index + 1; k++) {
-                XSSFCell name = this.student.createCell(k);
-                String stdName = this.DBEX.SelectName(faculty);
-                faculty = this.DBEX.getFacultyStore();
+                XSSFCell name = student.createCell(k);
+                String stdName = DBEX.SelectName(faculty);
+                faculty = DBEX.getFacultyStore();
                 name.setCellValue(stdName);
                 this.Sheet1.autoSizeColumn(k, true);
                 name.setCellStyle(setCellStyle(14, true));
@@ -117,6 +113,7 @@ public class ExcelOperation {
             File f2 = new File(pathPart + dateName + ".xlsx");
             fpb = new FileOutputStream(f2);
             this.Workbook1.write(fpb);
+            Msg.showMessage("Excel file created");
         } catch (IOException e) {
             Msg.showError("file creation error");
         } finally {
@@ -127,6 +124,5 @@ public class ExcelOperation {
                 Msg.showError("error");
             }
         }
-        Msg.showMessage("Excel file created");
     }
 }

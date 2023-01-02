@@ -1,15 +1,8 @@
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.List;
 import java.util.Vector;
-
 public class RoomData {
     Connection c;
-
     public RoomData() {
         try {
             this.c = DriverManager.getConnection("jdbc:mysql://localhost:3307/roomdata", "root", "");
@@ -48,8 +41,7 @@ public class RoomData {
             if (r.next())
                 k = r.getInt("total");
         } catch (SQLException e) {
-            Msg.showError("error1234");
-            e.printStackTrace();
+            Msg.showError("error");
         }
         return k;
     }
@@ -62,13 +54,12 @@ public class RoomData {
             if (r.next())
                 k = r.getInt("row_no");
         } catch (SQLException e) {
-            Msg.showError("error123");
-            e.printStackTrace();
+            Msg.showError("error");
         }
         return k;
     }
 
-    public void addData(String roomName, int row, int col) {
+    public void addData(String roomName, int row, int col,int value) {
         try {
             Statement stmt = this.c.createStatement();
             stmt.execute("create table if not exists " + roomName + "(column_name int , row_no int)");
@@ -77,6 +68,8 @@ public class RoomData {
             pst.setInt(1, col);
             pst.setInt(2, row);
             pst.executeUpdate();
+            if((col==2 && value==0) || (col==3&& value!=0))
+                Msg.showMessage("Room Added");
         } catch (SQLException e) {
             Msg.showError("insertion error \n");
         }

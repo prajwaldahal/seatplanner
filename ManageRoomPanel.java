@@ -1,19 +1,11 @@
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.LayoutManager;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.EventObject;
-import java.util.Vector;
-import javax.swing.JButton;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableModel;
+import javax.swing.*;
+import javax.swing.table.*;
+import java.awt.*;
+import java.awt.event.*;
+import java.util.*;
 
 public class ManageRoomPanel extends JPanel {
-    private final RoomData rd = new RoomData();
+    private RoomData rd = new RoomData();
 
     private UpdateRoom UR = new UpdateRoom();
 
@@ -26,7 +18,7 @@ public class ManageRoomPanel extends JPanel {
     private DefaultTableModel RoomTable;
 
     public UpdateRoom getUR() {
-        return this.UR;
+        return UR;
     }
 
     public JTable getTableM() {
@@ -48,14 +40,14 @@ public class ManageRoomPanel extends JPanel {
         Vector<Room> vector = RoomData();
         String[] ColumnName = { "Name", "No.of Column", "total row1", "total row2", "total row3" };
         this.RoomTable = new DefaultTableModel();
-        this.RoomTable.setColumnIdentifiers((Object[])ColumnName);
+        this.RoomTable.setColumnIdentifiers(ColumnName);
         Object[] row = new Object[5];
         for (Room r : vector) {
             row[0] = r.getRoomName();
-            row[1] = Integer.valueOf(r.getColumn());
-            row[2] = Integer.valueOf(r.getRow());
-            row[3] = Integer.valueOf(r.getRow2());
-            row[4] = Integer.valueOf(r.getRow3());
+            row[1] = r.getColumn();
+            row[2] = r.getRow();
+            row[3] = r.getRow2();
+            row[4] = r.getRow3();
             this.RoomTable.addRow(row);
         }
         this.TableM = new JTable(this.RoomTable) {
@@ -63,13 +55,13 @@ public class ManageRoomPanel extends JPanel {
                 return false;
             }
         };
-        this.TableM.setFont(new Font("verdana", 1, 12));
+        this.TableM.setFont(new Font("verdana", Font.BOLD, 12));
         this.TableM.setBackground(Color.white);
         this.Add = new JButton("Add Room");
         JButton Delete = new JButton("Delete");
         this.Update = new JButton("Update");
         Delete.setBounds(5, 3, 150, 30);
-        Delete.setFont(new Font("verdana", 1, 16));
+        Delete.setFont(new Font("verdana", Font.BOLD, 16));
         this.Add.setBounds(Delete.getWidth() + 75, 3, 150, 30);
         this.Add.setFont(Delete.getFont());
         this.Update.setFont(Delete.getFont());
@@ -80,8 +72,8 @@ public class ManageRoomPanel extends JPanel {
             }
         });
         setBackground(Color.white);
-        setLayout((LayoutManager)null);
-        JScrollPane SP = new JScrollPane(this.TableM, 20, 30);
+        setLayout(null);
+        JScrollPane SP = new JScrollPane(this.TableM, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         SP.setBounds(2, 40, this.Update.getX() + this.Update.getWidth(), 357);
         SP.getViewport().setBackground(Color.white);
         add(Delete);
@@ -93,15 +85,14 @@ public class ManageRoomPanel extends JPanel {
     private Vector<Room> RoomData() {
         Vector<Room> vector = new Vector<>();
         int[] row = new int[3];
-        Vector<String> TableName = this.rd.retrieveTableName();
+        Vector<String> TableName = rd.retrieveTableName();
         for (String s : TableName) {
-            int column = this.rd.getColumn(s);
+            int column = rd.getColumn(s);
             if (column == 2)
                 row[2] = 0;
             for (int i = 1; i <= column; i++)
-                row[i - 1] = this.rd.getRow(i, s);
-            Room r = new Room(s, column, row[0], row[1], row[2]);
-            vector.add(r);
+                row[i - 1] = rd.getRow(i, s);
+            boolean add = vector.add(new Room(s, column, row[0], row[1], row[2]));
         }
         return vector;
     }
@@ -113,12 +104,11 @@ public class ManageRoomPanel extends JPanel {
         String row1 = this.TableM.getModel().getValueAt(row, 2).toString();
         String row2 = this.TableM.getModel().getValueAt(row, 3).toString();
         String row3 = this.TableM.getModel().getValueAt(row, 4).toString();
-        System.out.println(row2 + " " + row2);
-        this.UR.setRoomName(roomName);
-        this.UR.setColumnNo(column);
-        this.UR.setRow1(row1);
-        this.UR.setRow2(row2);
-        this.UR.setRow3(row3);
+        UR.setRoomName(roomName);
+        UR.setColumnNo(column);
+        UR.setRow1(row1);
+        UR.setRow2(row2);
+        UR.setRow3(row3);
     }
 
     private void deleteActionPerformed() {
@@ -128,8 +118,11 @@ public class ManageRoomPanel extends JPanel {
             return;
         }
         String Name = this.TableM.getModel().getValueAt(row, 0).toString().trim();
-        this.rd.deleteRoom(Name);
-        initComponent();
+        int x = JOptionPane.showConfirmDialog(this, "do you want to delete " + Name);
+        if (x == 0) {
+            rd.deleteRoom(Name);
+            initComponent();
+        }
     }
 
     public JButton getAdd() {

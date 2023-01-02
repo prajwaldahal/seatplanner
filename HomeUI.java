@@ -1,19 +1,13 @@
 import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
+import javax.swing.table.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.io.File;
-import java.io.IOException;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.EventObject;
+import java.awt.event.*;
+import java.io.*;
+import java.sql.*;
+import java.util.*;
 import java.util.List;
-import java.util.Vector;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.regex.*;
+
 
 public class HomeUI extends JFrame {
     private JButton Back;
@@ -88,9 +82,9 @@ public class HomeUI extends JFrame {
 
     public void initComponents() {
         String[] sem = { "1st", "2nd", "3rd", "4th", "5th", "6th", "7th", "8th" };
-        String[] faculty = { "BCA", "BBA", "BIM" };
+        String[] faculty = { "BCA", "BBA", "BIM","C.E"};
         String[] seat = { "2", "3" };
-        this.db = new DatabaseOperation();
+        db = new DatabaseOperation();
         JPanel loggedIn = new JPanel(null);
         JPanel buttonPanel = new JPanel();
         this.SelectFacultyPanel = new JPanel();
@@ -214,7 +208,7 @@ public class HomeUI extends JFrame {
         buttonPanel.setBounds(0, 0, 160, 360);
         buttonPanel.setBackground(new Color(204, 255, 255));
         loggedIn.add(buttonPanel);
-        manageRoom.setFont(new Font("Verdana", 1, 14));
+        manageRoom.setFont(new Font("Verdana", Font.BOLD, 14));
         manageRoom.setBounds(2, 105, 155, 35);
         studentList.setFont(manageRoom.getFont());
         studentList.setBounds(2, 60, 155, 35);
@@ -231,35 +225,35 @@ public class HomeUI extends JFrame {
         this.RoomPanel.add(roomInnerPanel, "RIP");
         this.RoomPanel.add(this.ColumnPanel, "CP");
         roomL.setBounds(10, 30, 200, 80);
-        roomL.setFont(new Font("Verdana", 1, 14));
+        roomL.setFont(new Font("Verdana", Font.BOLD, 14));
         roomInnerPanel.add(roomL);
         this.Room.setBounds(30, 85, 200, 30);
         roomInnerPanel.add(this.Room);
         NoColumnL.setBounds(10, 93, 200, 80);
-        NoColumnL.setFont(new Font("Verdana", 1, 14));
+        NoColumnL.setFont(new Font("Verdana", Font.BOLD, 14));
         roomInnerPanel.add(NoColumnL);
         this.ColumnNo.setBounds(30, 145, 200, 30);
         roomInnerPanel.add(this.ColumnNo);
         next.setBounds(350, 300, 95, 30);
         roomInnerPanel.add(next);
         numberPerSeat.setBounds(100, 230, 150, 80);
-        numberPerSeat.setFont(new Font("Verdana", 1, 12));
+        numberPerSeat.setFont(new Font("Verdana", Font.BOLD, 12));
         roomInnerPanel.setBackground(Color.white);
         AddRoomPanel.add(this.RoomPanel);
         AddRoomPanel.setBackground(Color.white);
         AddRoomPanel.setLayout(null);
         nameL.setBounds(100, 3, 200, 80);
-        nameL.setFont(new Font("Verdana", 1, 12));
+        nameL.setFont(new Font("Verdana", Font.BOLD, 12));
         addStudentPanel.add(nameL);
         this.Name.setBounds(150, 58, 200, 30);
         addStudentPanel.add(this.Name);
         LNameL.setBounds(100, 63, 200, 80);
-        LNameL.setFont(new Font("Verdana", 1, 12));
+        LNameL.setFont(new Font("Verdana", Font.BOLD, 12));
         addStudentPanel.add(LNameL);
         this.LName.setBounds(150, 118, 200, 30);
         addStudentPanel.add(this.LName);
         facultyL.setBounds(100, 123, 200, 80);
-        facultyL.setFont(new Font("Verdana", 1, 12));
+        facultyL.setFont(new Font("Verdana", Font.BOLD, 12));
         addStudentPanel.add(facultyL);
         this.Faculty.setBounds(150, 183, 200, 30);
         addStudentPanel.add(this.Faculty);
@@ -268,7 +262,7 @@ public class HomeUI extends JFrame {
         addStudentPanel.add(this.Semester);
         this.Semester.setSelectedIndex(0);
         studentIdL.setBounds(100, 188, 200, 80);
-        studentIdL.setFont(new Font("Verdana", 1, 12));
+        studentIdL.setFont(new Font("Verdana", Font.BOLD, 12));
         addStudentPanel.add(studentIdL);
         this.StudentId.setBounds(150, 243, 200, 30);
         addStudentPanel.add(this.StudentId);
@@ -291,7 +285,7 @@ public class HomeUI extends JFrame {
         loggedIn.add(seatPlanPanel);
         seatPlanPanel.setBounds(0, 360, 770, 50);
         seatPlanPanel.setBackground(new Color(153, 255, 255));
-        planSeat.setFont(new Font("Verdana", 1, 14));
+        planSeat.setFont(new Font("Verdana", Font.BOLD, 14));
         planSeat.setBounds(200, 10, 300, 30);
         JFrame.setDefaultLookAndFeelDecorated(true);
         this.PlanSeatPanel.setLayout(null);
@@ -311,7 +305,7 @@ public class HomeUI extends JFrame {
         JButton login = Lp.getLoginBtn();
         login.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                HomeUI.this.loginActionPerformed(Lp);
+                loginActionPerformed(Lp);
             }
         });
     }
@@ -335,7 +329,7 @@ public class HomeUI extends JFrame {
         String pwd = Lp.getPassword();
         Lp.setUserName();
         Lp.setPassword();
-        boolean k = this.db.checkLogin(userName, pwd);
+        boolean k = db.checkLogin(userName, pwd);
         if (k) {
             CardLayout cardLayout = (CardLayout)this.Cp.getLayout();
             cardLayout.show(this.Cp, "LL");
@@ -407,7 +401,6 @@ public class HomeUI extends JFrame {
         CardLayout cd = (CardLayout)this.ContentPanel.getLayout();
         cd.show(this.ContentPanel, "FLP");
     }
-
     private void fileOpen(ActionEvent e) {
         String name = e.getActionCommand();
         File f1 = new File("D:\\Seatplanner\\" + name);
@@ -430,7 +423,7 @@ public class HomeUI extends JFrame {
     }
 
     private void tempTableDispose() {
-        this.db.deleteTempTable();
+        db.deleteTempTable();
     }
 
     private void roomInfoCollect() throws Exception {
@@ -438,12 +431,11 @@ public class HomeUI extends JFrame {
         if (RoomName.isEmpty())
             throw new Exception("please select at least one room");
         tempTableDispose();
-        this.db.createTempTable(this.sql);
+        db.createTempTable(this.sql);
         try {
             checkError(RoomName);
             roomDataCollect(RoomName);
         } catch (Exception e) {
-            e.printStackTrace();
             Msg.showMessage(e.getMessage());
         }
     }
@@ -480,9 +472,8 @@ public class HomeUI extends JFrame {
         Faculty.remove(this.sql);
         this.sql = "('" + this.sql + "'";
         for (String name : Faculty)
-            this.sql += ",'" + name + "'";
+            this.sql = this.sql + (",'" + name + "'");
         this.sql = "insert into temp Select * from studentlist where faculty in " + this.sql + ")";
-        System.out.println(sql);
     }
 
     private void addFacultyItem() {
@@ -551,7 +542,7 @@ public class HomeUI extends JFrame {
             RoomData rd = new RoomData();
             for (int i = 0; i < 3; i++) {
                 if (i != 2 || s1[2] != 0)
-                    rd.addData(this.strRoom, s1[i], i + 1);
+                    rd.addData(this.strRoom, s1[i], i + 1,s1[2]);
             }
             CardLayout cardLayout = (CardLayout)this.RoomPanel.getLayout();
             cardLayout.show(this.RoomPanel, "RIP");
@@ -593,10 +584,10 @@ public class HomeUI extends JFrame {
         }
         String[] ColumnName = { "ID", "Name", "Faculty" };
         DefaultTableModel StudentTable = new DefaultTableModel();
-        StudentTable.setColumnIdentifiers((Object[])ColumnName);
+        StudentTable.setColumnIdentifiers(ColumnName);
         Object[] row = new Object[3];
         for (Student s : StudentData) {
-            row[0] = Integer.valueOf(s.getStudentid());
+            row[0] = s.getStudentid();
             row[1] = s.getName();
             row[2] = s.getFaculty();
             StudentTable.addRow(row);
@@ -654,7 +645,6 @@ public class HomeUI extends JFrame {
         String[] Facultyv = this.TableM.getModel().getValueAt(row, 2).toString().trim().split(" ");
         String coursev = Facultyv[0];
         String semesterv = Facultyv[1];
-        System.out.println(coursev + " " + coursev);
         UpdatePanel.setFirstName(firstnamev);
         UpdatePanel.setLastName(lastnamev);
         UpdatePanel.setFacultyCb(coursev);
@@ -695,7 +685,7 @@ public class HomeUI extends JFrame {
                 flag = false;
             }
             if (flag) {
-                this.db.insertData(storeStudentId, strName + " " + strName, (String)this.Faculty.getSelectedItem(), (String)this.Semester.getSelectedItem());
+                this.db.insertData(storeStudentId, strName + " " + strLName, (String)this.Faculty.getSelectedItem(), (String)this.Semester.getSelectedItem());
                 this.Name.setText("");
                 this.LName.setText("");
                 this.StudentId.setText("");

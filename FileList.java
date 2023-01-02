@@ -21,9 +21,4 @@ public class FileList {
         }
         return stringFile;
     }
-
-    public static void main(String[] args) {
-        FileList fl = new FileList();
-        System.out.println(fl.list().toString());
-    }
 }

@@ -1,28 +1,13 @@
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.LayoutManager;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
 
 public class Update extends JPanel {
-    private JLabel FirstNameL;
 
     private JLabel StudentId;
-
-    private JLabel LastNameL;
-
-    private JLabel Faculty;
-
-    private JButton UpdateBtn;
 
     private JTextField FirstName;
 
@@ -37,44 +22,47 @@ public class Update extends JPanel {
     }
 
     private void initComponent() {
+        removeAll();
+        repaint();
+        revalidate();
         String[] sem = { "1st", "2nd", "3rd", "4th", "5th", "6th", "7th", "8th" };
         String[] faculty = { "BCA", "BBA", "BIM" };
         this.FirstName = new JTextField(30);
         this.LastName = new JTextField(30);
-        this.Faculty = new JLabel("Faculty");
-        this.FirstNameL = new JLabel("First Name:");
-        this.LastNameL = new JLabel("Last Name:");
+        JLabel faculty1 = new JLabel("Faculty");
+        JLabel firstNameL = new JLabel("First Name:");
+        JLabel lastNameL = new JLabel("Last Name:");
         this.FacultyCb = new JComboBox<>(faculty);
         this.SemesterCb = new JComboBox<>(sem);
-        this.UpdateBtn = new JButton("Update");
+        var updateBtn = new JButton("Update");
         this.StudentId = new JLabel();
         add(this.StudentId);
-        this.FirstNameL.setBounds(100, 3, 200, 80);
-        this.FirstNameL.setFont(new Font("Verdana", 1, 12));
-        add(this.FirstNameL);
+        firstNameL.setBounds(100, 3, 200, 80);
+        firstNameL.setFont(new Font("Verdana", Font.BOLD, 12));
+        add(firstNameL);
         this.FirstName.setBounds(150, 58, 200, 30);
         add(this.FirstName);
-        this.LastNameL.setBounds(100, 63, 200, 80);
-        this.LastNameL.setFont(new Font("Verdana", 1, 12));
-        add(this.LastNameL);
+        lastNameL.setBounds(100, 63, 200, 80);
+        lastNameL.setFont(new Font("Verdana", Font.BOLD, 12));
+        add(lastNameL);
         this.LastName.setBounds(150, 118, 200, 30);
         add(this.LastName);
-        this.Faculty.setBounds(100, 123, 200, 80);
-        this.Faculty.setFont(new Font("Verdana", 1, 12));
-        add(this.Faculty);
+        faculty1.setBounds(100, 123, 200, 80);
+        faculty1.setFont(new Font("Verdana", Font.BOLD, 12));
+        add(faculty1);
         this.FacultyCb.setBounds(150, 183, 200, 30);
         add(this.FacultyCb);
         this.SemesterCb.setBounds(355, 183, 200, 30);
         add(this.SemesterCb);
-        this.UpdateBtn.setBounds(180, 290, 100, 30);
-        add(this.UpdateBtn);
-        this.UpdateBtn.addActionListener(new ActionListener() {
+        updateBtn.setBounds(180, 290, 100, 30);
+        add(updateBtn);
+        updateBtn.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 Update.this.UpdateActionPerformed();
             }
         });
         setBackground(Color.white);
-        setLayout((LayoutManager)null);
+        setLayout(null);
     }
 
     private void UpdateActionPerformed() {
@@ -82,9 +70,10 @@ public class Update extends JPanel {
             checkValidation();
             int x = JOptionPane.showConfirmDialog(new JFrame(), "do you want to update student with id = " + this.StudentId.getText());
             if (x == 0) {
-                Student s2 = new Student(Integer.parseInt(this.StudentId.getText()), this.FirstName.getText() + " " + this.FirstName.getText(), "" + this.FacultyCb.getSelectedItem() + " " + this.FacultyCb.getSelectedItem());
+                Student s2 = new Student(Integer.parseInt(this.StudentId.getText()), this.FirstName.getText() + " " + this.LastName.getText(), "" + this.FacultyCb.getSelectedItem() + " " + this.SemesterCb.getSelectedItem());
                 DatabaseOperation dbex = new DatabaseOperation();
                 dbex.Update(s2);
+                initComponent();
             }
         } catch (Exception e) {
             Msg.showMessage(e.getMessage());
