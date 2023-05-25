@@ -47,7 +47,7 @@ public class LoginPanel extends JPanel {
         this.top = new JLabel("Login Here");
         this.top.setBounds(300, 2, 200, 80);
         this.top.setFont(new Font("Verdana", 2, 20));
-        this.userNameL.setBounds(235, 50, 200, 80);
+        this.userNameL.setBounds(235, 60, 200, 80);
         this.userNameL.setFont(new Font("Verdana", 1, 15));
         this.userName.setBounds(this.userNameL.getX() + 50, this.userNameL.getY() + 60, 200, 30);
         this.PasswordL.setBounds(this.userNameL.getX(), this.userName.getY() + 5, 200, 80);

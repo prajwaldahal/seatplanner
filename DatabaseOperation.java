@@ -11,7 +11,7 @@ public class DatabaseOperation {
             this.c = DriverManager.getConnection("jdbc:mysql://localhost:3307/seatplanner", "root", "");
         } catch (Exception e) {
             Msg.showError("connection error");
-            System.exit(1);
+            //System.exit(1);
         }
     }
 
