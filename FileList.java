@@ -4,7 +4,7 @@ import java.util.Vector;
 
 public class FileList {
     public Vector<String> list() {
-        Vector<String> tringFile = new Vector<>();
+        Vector<String> stringFile = new Vector<>();
         File dir = new File("d://Seatplanner");
         if (!dir.exists()) {
             stringFile.add("no file found");
