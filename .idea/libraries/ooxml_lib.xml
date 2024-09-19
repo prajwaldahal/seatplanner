@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="ooxml-lib">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/lib/apache/ooxml-lib/curvesapi-1.07.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/apache/ooxml-lib/commons-compress-1.21.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/apache/ooxml-lib/xmlbeans-5.0.3.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/apache/ooxml-lib/commons-logging-1.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/apache/ooxml-lib/slf4j-api-1.7.36.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
