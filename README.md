@@ -13,4 +13,7 @@ Seatplanner is a Java application for managing and generating seat plans. It lev
 ## Getting Started
 ````bash
    git clone https://github.com/prajwaldahal/seatplanner.git
+````
 
+## Setup project External library
+    
