@@ -7,10 +7,10 @@ Seatplanner is a Java application for managing and generating seat plans. It lev
 ## Prerequisites
 
 - **Java JDK 11 or higher**
+- **MySQL Connector/J**
+- **Apache POI** 
 
 ## Getting Started
+````bash
+   git clone https://github.com/prajwaldahal/seatplanner.git
 
-### Cloning the Repository
-
-```bash
-git clone https://github.com/prajwaldahal/seatplanner.git
